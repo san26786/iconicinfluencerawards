@@ -1,0 +1,435 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Header logo swap — a site can supply a separate logo variant that only
+   reads well on a white background (logo_url_light). Default (no explicit
+   data-theme, or dark) shows the normal logo; light mode swaps it in. */
+.theme-logo-light { display: none; }
+html[data-theme="light"] .theme-logo-light { display: block; }
+html[data-theme="light"] .theme-logo-dark { display: none; }
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES — brand colour tokens
+   Values are RGB channel triplets so they work with Tailwind's
+   rgb(var(--c-xxx) / <alpha-value>) opacity variant pattern.
+
+   These are the Property Excellence Awards defaults and must stay
+   in step with PEA_DEFAULTS in lib/site.ts — that fallback is what
+   renders when the DB is unreachable, and a mismatch would repaint
+   the site mid-outage.
+   The live values are injected inline by app/layout.tsx from the
+   `sites` DB table.
+   ============================================================ */
+:root {
+  /* Fonts */
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-sans:    var(--font-inter), system-ui, sans-serif;
+
+  /* Property Excellence theme — amber on navy */
+  --c-primary:     255 173 36;  /* #FFAD24 — brand amber          */
+  --c-light:       244 227 161; /* #F4E3A1 — pale gold            */
+  --c-deep:        168 132 42;  /* #A8842A — deep gold            */
+  --c-50:          249 248 244; /* #F9F8F4 — cream tint           */
+  --c-bg:          14 20 36;    /* #0E1424 — navy bg              */
+  --c-bg-slate:    10 15 28;    /* #0A0F1C — deeper navy bg       */
+  --c-bg-warm:     20 19 38;    /* #141326 — warm navy bg         */
+  --c-bg-darkest:  6 10 20;     /* #060A14 — deepest navy         */
+}
+
+/* ── Per-site font overrides ────────────────────────────────────── */
+html[data-font-display="cormorant"] { --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif; }
+html[data-font-display="lora"]      { --font-display: var(--font-lora), 'Lora', Georgia, serif; }
+html[data-font-body="nunito"]       { --font-sans: var(--font-nunito), 'Nunito', system-ui, sans-serif; }
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  background-color: rgb(var(--c-bg));
+  color: #F8FAFC;
+  overflow-x: hidden;
+  min-height: 100svh;
+}
+
+/* Premium selection */
+::selection {
+  background: rgb(var(--c-primary) / 0.35);
+  color: rgb(var(--c-50));
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar        { width: 10px; }
+::-webkit-scrollbar-track  { background: rgb(var(--c-bg)); }
+::-webkit-scrollbar-thumb  {
+  background: linear-gradient(180deg, rgb(var(--c-light)), rgb(var(--c-primary)), rgb(var(--c-deep)));
+  border-radius: 999px;
+}
+
+@layer components {
+  /* Brand gradient text */
+  .text-gold-gradient {
+    background: linear-gradient(
+      110deg,
+      rgb(var(--c-deep))    0%,
+      rgb(var(--c-primary)) 30%,
+      rgb(var(--c-light))   50%,
+      rgb(var(--c-primary)) 70%,
+      rgb(var(--c-deep))    100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .text-gold-shimmer {
+    background-image: linear-gradient(
+      110deg,
+      rgb(var(--c-deep))    0%,
+      rgb(var(--c-primary)) 25%,
+      rgb(var(--c-light))   50%,
+      rgb(var(--c-primary)) 75%,
+      rgb(var(--c-deep))    100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+
+  /* Glassmorphism card */
+  .glass {
+    background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .glass-gold {
+    background: linear-gradient(145deg, rgb(var(--c-primary) / 0.12) 0%, rgb(var(--c-primary) / 0.04) 100%);
+    border: 1px solid rgb(var(--c-primary) / 0.28);
+  }
+
+  /* Hairline brand-colour divider */
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--c-light) / 0.5),
+      rgb(var(--c-primary) / 0.5),
+      transparent
+    );
+  }
+
+  /* Eyebrow / kicker */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[0.7rem] sm:text-xs font-semibold uppercase tracking-luxe text-gold;
+  }
+
+  .section-pad   { @apply px-5 sm:px-8 lg:px-12; }
+  .container-luxe { @apply mx-auto w-full max-w-7xl; }
+
+  /* ── Cream band ────────────────────────────────────────────────
+     The page alternates dark navy sections with cream ones. Sections
+     inside the site are written for a dark background, so .band-light
+     flips the whole subtree rather than asking each one to know which
+     band it landed in: the surface becomes the --c-50 cream tint and
+     the white-on-dark text utilities are re-pointed at ink tones.
+     Anything sitting on the brand gradient (buttons, .text-gold-*)
+     keeps its own colours and is deliberately left alone. */
+  .band-light {
+    background: rgb(var(--c-50));
+    color: #16233d;
+  }
+  .band-light .glass {
+    background: linear-gradient(145deg, rgba(22,35,61,0.05) 0%, rgba(22,35,61,0.015) 100%);
+    border-color: rgba(22,35,61,0.12);
+  }
+  .band-light .glass-gold {
+    background: linear-gradient(145deg, rgb(var(--c-primary) / 0.16) 0%, rgb(var(--c-primary) / 0.06) 100%);
+    border-color: rgb(var(--c-deep) / 0.35);
+  }
+  .band-light .text-white        { color: #16233d; }
+  .band-light .text-white\/90,
+  .band-light .text-white\/85,
+  .band-light .text-white\/80,
+  .band-light .text-white\/75    { color: rgba(22,35,61,0.86); }
+  .band-light .text-white\/70,
+  .band-light .text-white\/65,
+  .band-light .text-white\/60,
+  .band-light .text-white\/55    { color: rgba(22,35,61,0.68); }
+  .band-light .text-white\/50,
+  .band-light .text-white\/45,
+  .band-light .text-white\/40,
+  .band-light .text-white\/35    { color: rgba(22,35,61,0.52); }
+  /* --c-deep (#A8842A) only reaches 3.3:1 on the cream surface, so eyebrows and
+     other gold text in a light band use a darker tone that clears AA at normal
+     text sizes. The brand gradient itself is untouched. */
+  .band-light .text-gold         { color: #6E5210; }
+  .band-light .border-white\/10  { border-color: rgba(22,35,61,0.12); }
+  /* Progress/meter tracks — invisible if left as white on cream. */
+  .band-light .bg-white\/10      { background-color: rgba(22,35,61,0.12); }
+  .band-light .bg-white\/\[0\.025\],
+  .band-light .bg-white\/\[0\.02\],
+  .band-light .bg-white\/\[0\.015\] { background-color: rgba(22,35,61,0.035); }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  /* Subtle noise/grain overlay */
+  .grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+}
+
+/* Scroll reveal */
+.reveal,
+.reveal-stagger {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.reveal-in,
+.reveal-in > .reveal-stagger {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal-stagger {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   Google Translate — hide default sticky bar & tooltip badge
+   Our custom dropdown in SiteHeader is the only visible UI.
+   ============================================================ */
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+}
+.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+
+/* ============================================================
+   LIGHT THEME
+   Applied when html[data-theme="light"].
+   !important on CSS vars beats the inline style set by layout.tsx.
+   ============================================================ */
+html[data-theme="light"] {
+  --c-bg:         252 252 253 !important;
+  --c-bg-slate:   244 242 250 !important;
+  --c-bg-warm:    252 248 243 !important;
+  --c-bg-darkest: 236 234 242 !important;
+  color-scheme: light;
+}
+
+html[data-theme="light"] body {
+  background-color: rgb(252 252 253);
+  color: #0f0f1a;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+html[data-theme="light"] header {
+  background-color: rgba(252, 252, 253, 0.95) !important;
+  border-bottom-color: rgba(15, 15, 26, 0.1) !important;
+}
+
+/* ── Text: white → near-black ────────────────────────────────── */
+html[data-theme="light"] .text-white     { color: #0f0f1a !important; }
+html[data-theme="light"] .text-white\/90 { color: rgba(15,15,26,.90) !important; }
+html[data-theme="light"] .text-white\/85 { color: rgba(15,15,26,.85) !important; }
+html[data-theme="light"] .text-white\/80 { color: rgba(15,15,26,.80) !important; }
+html[data-theme="light"] .text-white\/75 { color: rgba(15,15,26,.75) !important; }
+html[data-theme="light"] .text-white\/70 { color: rgba(15,15,26,.70) !important; }
+html[data-theme="light"] .text-white\/65 { color: rgba(15,15,26,.65) !important; }
+html[data-theme="light"] .text-white\/60 { color: rgba(15,15,26,.60) !important; }
+html[data-theme="light"] .text-white\/55 { color: rgba(15,15,26,.55) !important; }
+html[data-theme="light"] .text-white\/50 { color: rgba(15,15,26,.50) !important; }
+html[data-theme="light"] .text-white\/45 { color: rgba(15,15,26,.45) !important; }
+html[data-theme="light"] .text-white\/40 { color: rgba(15,15,26,.40) !important; }
+html[data-theme="light"] .text-white\/35 { color: rgba(15,15,26,.35) !important; }
+html[data-theme="light"] .text-white\/30 { color: rgba(15,15,26,.30) !important; }
+html[data-theme="light"] .text-white\/25 { color: rgba(15,15,26,.25) !important; }
+html[data-theme="light"] .text-white\/20 { color: rgba(15,15,26,.20) !important; }
+html[data-theme="light"] .text-white\/15 { color: rgba(15,15,26,.15) !important; }
+html[data-theme="light"] .text-white\/10 { color: rgba(15,15,26,.10) !important; }
+html[data-theme="light"] .text-white\/8  { color: rgba(15,15,26,.08) !important; }
+html[data-theme="light"] .text-cream     { color: #0f0f1a !important; }
+
+/* ── Borders: white → soft dark ──────────────────────────────── */
+html[data-theme="light"] .border-white\/30 { border-color: rgba(15,15,26,.18) !important; }
+html[data-theme="light"] .border-white\/25 { border-color: rgba(15,15,26,.15) !important; }
+html[data-theme="light"] .border-white\/20 { border-color: rgba(15,15,26,.12) !important; }
+html[data-theme="light"] .border-white\/15 { border-color: rgba(15,15,26,.10) !important; }
+html[data-theme="light"] .border-white\/10 { border-color: rgba(15,15,26,.08) !important; }
+html[data-theme="light"] .border-white\/8  { border-color: rgba(15,15,26,.06) !important; }
+
+/* ── Backgrounds: white-alpha → dark-alpha (glass cards) ─────── */
+html[data-theme="light"] .bg-white\/\[0\.03\] { background-color: rgba(15,15,26,.03) !important; }
+html[data-theme="light"] .bg-white\/\[0\.04\] { background-color: rgba(15,15,26,.04) !important; }
+html[data-theme="light"] .bg-white\/\[0\.05\] { background-color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .bg-white\/\[0\.06\] { background-color: rgba(15,15,26,.06) !important; }
+html[data-theme="light"] .bg-white\/\[0\.07\] { background-color: rgba(15,15,26,.07) !important; }
+html[data-theme="light"] .bg-white\/5         { background-color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .bg-white\/10        { background-color: rgba(15,15,26,.08) !important; }
+
+/* ── Glass utility ────────────────────────────────────────────── */
+html[data-theme="light"] .glass {
+  background: rgba(15, 15, 26, 0.06) !important;
+  border-color: rgba(15, 15, 26, 0.12) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* ── Always-dark sections (hero with photo bg) ───────────────── */
+/* Only active in light mode — restore the dark CSS vars so hero  */
+/* photo backgrounds stay dark and white text remains readable.   */
+html[data-theme="light"] [data-always-dark] {
+  --c-bg:         11 10 14  !important;
+  --c-bg-slate:   20 17 26  !important;
+  --c-bg-warm:    26 15 15  !important;
+  --c-bg-darkest:  6  4  8  !important;
+}
+html[data-theme="light"] [data-always-dark] .text-white     { color: #ffffff !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/90 { color: rgba(255,255,255,.90) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/85 { color: rgba(255,255,255,.85) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/80 { color: rgba(255,255,255,.80) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/75 { color: rgba(255,255,255,.75) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/70 { color: rgba(255,255,255,.70) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/65 { color: rgba(255,255,255,.65) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/60 { color: rgba(255,255,255,.60) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/55 { color: rgba(255,255,255,.55) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/50 { color: rgba(255,255,255,.50) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/45 { color: rgba(255,255,255,.45) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/40 { color: rgba(255,255,255,.40) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/30 { color: rgba(255,255,255,.30) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/25 { color: rgba(255,255,255,.25) !important; }
+html[data-theme="light"] [data-always-dark] .text-white\/20 { color: rgba(255,255,255,.20) !important; }
+html[data-theme="light"] [data-always-dark] .text-cream     { color: #F8FAFC !important; }
+html[data-theme="light"] [data-always-dark] .border-white\/10 { border-color: rgba(255,255,255,.10) !important; }
+html[data-theme="light"] [data-always-dark] .border-white\/15 { border-color: rgba(255,255,255,.15) !important; }
+html[data-theme="light"] [data-always-dark] .border-white\/20 { border-color: rgba(255,255,255,.20) !important; }
+html[data-theme="light"] [data-always-dark] .bg-ink\/75  { background-color: rgba(11,10,14,.75)  !important; }
+html[data-theme="light"] [data-always-dark] .bg-ink\/85  { background-color: rgba(11,10,14,.85)  !important; }
+html[data-theme="light"] [data-always-dark] .glass {
+  background: rgba(11, 10, 14, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Dark hardcoded bg overrides ─────────────────────────────── */
+html[data-theme="light"] .bg-\[\#0f0f1a\] { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-ink          { background-color: rgb(var(--c-bg)) !important; }
+
+/* ── Organiser panel (admin pages keep dark feel) ─────────────── */
+html[data-theme="light"] .min-h-screen.bg-ink {
+  background-color: rgb(var(--c-bg)) !important;
+}
+
+/* ── Grain effect softened in light mode ─────────────────────── */
+html[data-theme="light"] .grain::before { opacity: 0.015 !important; }
+
+/* ── ThemeToggle: button text contrast in light mode ────────────── */
+html[data-theme="light"] .text-ink { color: #0f0f1a !important; }
+
+/* ── Hardcoded dark hex backgrounds (dropdowns, modals) ──────────── */
+html[data-theme="light"] .bg-\[\#1a1a2e\]  { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-\[\#16161e\]  { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-\[\#0f172a\]  { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-\[\#0f0f1a\]  { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-\[\#0d0b14\]  { background-color: #f5f4fa !important; }
+html[data-theme="light"] .bg-\[\#1a1a2e\]\/95 { background-color: rgba(245,244,250,.95) !important; }
+/* Native <option> backgrounds (dropdown lists) */
+html[data-theme="light"] .bg-slate-900 { background-color: #f5f4fa !important; color: #0f0f1a !important; }
+
+/* ── bg-ink opacity variants (popovers / dropdowns) ──────────────── */
+html[data-theme="light"] .bg-ink\/95  { background-color: rgba(252,252,253,.97) !important; }
+html[data-theme="light"] .bg-ink\/98  { background-color: rgba(252,252,253,.99) !important; }
+html[data-theme="light"] .bg-ink\/90  { background-color: rgba(252,252,253,.92) !important; }
+html[data-theme="light"] .bg-ink\/80  { background-color: rgba(252,252,253,.85) !important; }
+
+/* ── Hover text: white → dark so it doesn't wash out ────────────── */
+html[data-theme="light"] .hover\:text-white:hover { color: #0f0f1a !important; }
+html[data-theme="light"] .hover\:text-white\/80:hover { color: rgba(15,15,26,.80) !important; }
+html[data-theme="light"] .hover\:bg-white\/5:hover  { background-color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .hover\:bg-white\/\[0\.04\]:hover { background-color: rgba(15,15,26,.04) !important; }
+
+/* ── Missing text-white opacity steps ───────────────────────────── */
+html[data-theme="light"] .text-white\/5  { color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .text-white\/100 { color: #0f0f1a !important; }
+
+/* ── Placeholder text ────────────────────────────────────────────── */
+html[data-theme="light"] .placeholder\:text-white\/30::placeholder { color: rgba(15,15,26,.30) !important; }
+html[data-theme="light"] .placeholder\:text-white\/25::placeholder { color: rgba(15,15,26,.25) !important; }
+
+/* ── Focus ring / border on inputs ──────────────────────────────── */
+html[data-theme="light"] .focus\:border-gold\/40:focus { border-color: rgb(var(--c-primary) / .40) !important; }
+
+/* ── Dividers ────────────────────────────────────────────────────── */
+html[data-theme="light"] .divide-white\/5  > * + * { border-color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .divide-white\/\[0\.04\] > * + * { border-color: rgba(15,15,26,.04) !important; }
+
+/* ── Backdrop (modals) ───────────────────────────────────────────── */
+html[data-theme="light"] .backdrop-blur-sm  { backdrop-filter: blur(4px) !important; }
+html[data-theme="light"] .backdrop-blur-md  { backdrop-filter: blur(12px) !important; }
+
+/* ── Border extras ───────────────────────────────────────────────── */
+html[data-theme="light"] .border-white\/5  { border-color: rgba(15,15,26,.05) !important; }
+html[data-theme="light"] .border-white\/8  { border-color: rgba(15,15,26,.06) !important; }
+
+/* ── Judge / check-eligibility pages ────────────────────────────── */
+html[data-theme="light"] .bg-ink\/\[0\.03\]   { background-color: rgba(15,15,26,.03) !important; }
+html[data-theme="light"] .bg-ink\/\[0\.02\]   { background-color: rgba(15,15,26,.02) !important; }
+html[data-theme="light"] .bg-white\/\[0\.025\] { background-color: rgba(15,15,26,.025) !important; }
+html[data-theme="light"] .bg-white\/\[0\.02\]  { background-color: rgba(15,15,26,.02) !important; }

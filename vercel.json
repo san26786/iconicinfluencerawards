@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/organiser/email-jobs/process",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
