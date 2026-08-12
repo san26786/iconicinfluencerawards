@@ -81,7 +81,7 @@ export async function generateMetadata(): Promise<Metadata> {
       `awards ${site.year}`,
       site.event_city ? `${site.event_city} awards` : null,
       'nominate a business',
-    ].filter(Boolean),
+    ].filter(Boolean) as string[],
     authors: [{ name: site.name }],
     openGraph: {
       type: 'website',
