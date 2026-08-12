@@ -1,9 +1,16 @@
 import dynamic from 'next/dynamic';
 import { HeroRouter } from '@/components/sections/HeroRouter';
 import { CountdownBand } from '@/components/sections/CountdownBand';
-import { FindMyAward } from '@/components/sections/FindMyAward';
 import { WhyWin } from '@/components/sections/WhyWin';
 import { CategoriesBanner } from '@/components/CategoriesBanner';
+
+// "Find My Award" is deliberately not rendered yet: its quiz questions and
+// results are built entirely from the AWARD_CATEGORIES taxonomy in
+// lib/content.ts, which is still the inherited property-industry taxonomy
+// (see scripts/seed-iconic-influencer-awards.js — themes/categories were
+// intentionally left unseeded pending real category names). Re-add
+// `<FindMyAward />` below once that taxonomy is replaced with real
+// Iconic Influencer Awards categories.
 
 // Below-the-fold sections are dynamic-imported so the JS for sections the
 // user may never scroll to doesn't sit in the initial / route bundle.
@@ -42,7 +49,6 @@ export default function Home() {
     <main id="main">
       {/*  1 */} <HeroRouter />
       {/*  2 */} <CountdownBand />
-      {/*  3 */} <FindMyAward />
       {/*  4 */} <WhyWin />
       {/*  5 */} <CategoriesBanner />
       {/*  6 */} <Journey />

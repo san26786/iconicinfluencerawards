@@ -17,7 +17,7 @@ const SITE_DOMAIN = process.env.DEV_SITE_DOMAIN || 'iconicinfluencerawards.com';
 const SITE = {
   name: 'Iconic Influencer Awards',
   slug: 'iconic-influencer-awards',
-  tagline: 'PLACEHOLDER — Celebrating the Creators, Brands and Platforms Shaping Digital Influence.',
+  tagline: 'Celebrating the Creators, Brands and Platforms Shaping Digital Influence.',
   year: '2026',
   legal: null,
   event_date: null,

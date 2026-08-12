@@ -41,32 +41,37 @@ export function CategoriesBanner() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70 text-balance">
-            {CATEGORY_COUNT} honours across agency, development, property services, innovation,
-            people and impact — each a different stage for a different story. Find the one built
-            for yours, and enter as many as genuinely fit.
+            {CATEGORY_COUNT} honours across every platform, niche and format — each a different
+            stage for a different story. Find the one built for yours, and enter as many as
+            genuinely fit.
           </p>
-
-          {/* Teaser chips */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
-            {TEASER.map((c) => (
-              <span
-                key={c.name}
-                className="inline-flex items-center gap-2 rounded-full glass px-3.5 py-2 text-xs font-medium text-white/70"
-              >
-                <Icon name={c.icon as IconName} className="h-4 w-4 text-gold" />
-                {c.name}
-              </span>
-            ))}
-            <span className="inline-flex items-center rounded-full glass-gold px-3.5 py-2 text-xs font-semibold text-gold">
-              + {REMAINING} more
-            </span>
-          </div>
 
           <div className="mt-10">
             <PrimaryButton href={SITE.categoriesUrl}>Explore All Categories</PrimaryButton>
           </div>
         </Reveal>
       </div>
+
+      {/* Teaser chips — scrolling ticker so the taxonomy reads as a living,
+          scrollable list rather than another static card grid. */}
+      <Reveal delay={0.15} className="relative mt-14">
+        <div className="mask-fade-x overflow-hidden">
+          <div className="flex w-max animate-marquee items-center gap-3 hover:[animation-play-state:paused]">
+            {[...TEASER, ...TEASER].map((c, i) => (
+              <span
+                key={`${c.name}-${i}`}
+                className="inline-flex flex-shrink-0 items-center gap-2 rounded-full glass px-4 py-2.5 text-sm font-medium text-white/70"
+              >
+                <Icon name={c.icon as IconName} className="h-4 w-4 text-gold" />
+                {c.name}
+              </span>
+            ))}
+          </div>
+        </div>
+        <p className="relative mt-6 text-center text-sm font-semibold text-gold">
+          + {REMAINING} more categories to explore
+        </p>
+      </Reveal>
     </section>
   );
 }

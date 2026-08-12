@@ -29,6 +29,9 @@ import {
   HardHat,
   BarChart3,
   Compass,
+  Gamepad2,
+  Dumbbell,
+  Plane,
   type LucideProps,
 } from 'lucide-react';
 
@@ -63,6 +66,9 @@ const MAP = {
   HardHat,
   BarChart3,
   Compass,
+  Gamepad2,
+  Dumbbell,
+  Plane,
 } as const;
 
 export type IconName = keyof typeof MAP;

@@ -14,7 +14,7 @@ export function WhyWin() {
           eyebrow="Why enter"
           title={
             <>
-              Recognition that <span className="text-gold-gradient">works</span> for your business
+              Recognition that <span className="text-gold-gradient">works</span> for your career
             </>
           }
           subtitle="An award is more than a trophy. It is independent proof of excellence that compounds across brand, sales, talent and growth."
@@ -22,18 +22,18 @@ export function WhyWin() {
 
         <Reveal className="mx-auto mt-6 max-w-3xl text-center">
           <p className="text-base leading-relaxed text-white/55 text-balance">
-            Every firm in this industry has a story worth telling — the instruction nobody else
-            could win, the site nobody else would touch, the team that stayed when it would have
-            been easier to leave. Whether you are an emerging agency, an established developer or
-            a specialist nobody outside the trade has heard of yet, this is your opportunity to
-            gain the recognition your work deserves.
+            Every creator has a story worth telling — the video nobody else could make, the
+            community nobody else could build, the collaboration that changed everything. Whether
+            you are an emerging creator, an established personality or a specialist nobody outside
+            your niche has discovered yet, this is your opportunity to gain the recognition your
+            work deserves.
           </p>
         </Reveal>
 
-        <RevealGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-          {WHY_CARDS.map((card) => (
+        <RevealGroup className="mt-14 grid gap-4 sm:grid-cols-2" stagger={0.08}>
+          {WHY_CARDS.map((card, i) => (
             <RevealItem key={card.title}>
-              <WhyCard {...card} />
+              <WhyCard {...card} index={i} />
             </RevealItem>
           ))}
         </RevealGroup>
@@ -42,21 +42,34 @@ export function WhyWin() {
   );
 }
 
-function WhyCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+function WhyCard({
+  icon,
+  title,
+  body,
+  index,
+}: {
+  icon: string;
+  title: string;
+  body: string;
+  index: number;
+}) {
   return (
-    <div className="group relative h-full overflow-hidden rounded-2xl glass p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/30">
+    <div className="group relative flex items-start gap-5 overflow-hidden rounded-2xl glass p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold/30">
       {/* hover glow */}
       <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gold/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100 hidden sm:block" />
 
-      <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gold-gradient shadow-gold-sm transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
-        <Icon name={icon as IconName} className="h-6 w-6 text-ink" />
+      <span className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gold-gradient shadow-gold-sm transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+        <Icon name={icon as IconName} className="h-5 w-5 text-ink" />
       </span>
 
-      <h3 className="relative mt-6 font-display text-xl font-semibold text-white">{title}</h3>
-      <p className="relative mt-3 text-sm leading-relaxed text-white/55">{body}</p>
-
-      <div className="relative mt-6 h-px w-full bg-white/5">
-        <div className="h-px w-0 bg-gold-gradient transition-all duration-500 group-hover:w-full" />
+      <div className="relative">
+        <div className="flex items-baseline gap-2">
+          <span className="font-display text-xs font-semibold text-gold/40">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <h3 className="font-display text-lg font-semibold text-white">{title}</h3>
+        </div>
+        <p className="mt-2 text-sm leading-relaxed text-white/55">{body}</p>
       </div>
     </div>
   );

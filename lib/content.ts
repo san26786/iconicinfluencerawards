@@ -1,4 +1,4 @@
-// Central content + data for the Property Excellence Awards site.
+// Central content + data for the Iconic Influencer Awards site.
 
 export const IMG = (id: string, w = 1600, q = 80) =>
   id.startsWith('/') || id.startsWith('http') || id.startsWith('data:')
@@ -6,40 +6,37 @@ export const IMG = (id: string, w = 1600, q = 80) =>
     : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=${q}`;
 
 export const SITE = {
-  name: 'Property Excellence Awards',
+  name: 'Iconic Influencer Awards',
   // Stable machine-readable identifier sent to upstream APIs so a shared
   // backend can tell which site a payload came from. Kebab-case, matches
   // the repo name.
-  id: 'property-excellence-awards',
-  year: '2026-27',
+  id: 'iconic-influencer-awards',
+  year: '2026',
   tagline:
-    'Recognising the Agencies, Developers and People Shaping the Property Industry.',
-  venue: 'Cardiff City Stadium, Cardiff',
+    'Celebrating the Creators, Brands and Platforms Shaping Digital Influence.',
+  // Venue, dates and contact details are not confirmed yet — left empty
+  // rather than guessed. This object is only a legacy safety net (see
+  // lib/email/brand.ts); the DB-backed site row is the real source of truth.
+  venue: '',
   nominateUrl: '/register-interest',
   nominateOtherUrl: '/register-interest?mode=nominate',
   partnerUrl: '/partner',
   categoriesUrl: '/categories',
   themesUrl: '/themes',
-  // Confirmed ceremony date and running window. The entry deadline is not set
-  // yet and stays empty rather than being guessed — an invented one is what put
-  // a fabricated date on the site, the sitemap and the Event JSON-LD before.
-  eventDate: '29 Oct 2026',
-  eventDateLong: 'Thu, 29 October 2026',
-  eventDateISO: '2026-10-29T10:00:00+00:00',
-  eventCity: 'Cardiff',
-  venueShort: 'Cardiff City Stadium',
+  eventDate: '',
+  eventDateLong: '',
+  eventDateISO: '',
+  eventCity: '',
+  venueShort: '',
   ceremoniesCount: 1,
   deadlineISO: '',
   deadlineLabel: '',
-  // Contact — no confirmed number for this brand yet
   phoneDisplay: '',
   phoneHref: '',
-  email: 'organiser@propertyexcellenceawards.org',
-  company: 'B2B Growth Hub Limited',
-  address: 'Level 30, The Leadenhall Building, 122 Leadenhall St, London EC3V 4AB, United Kingdom',
-  // Legal
-  legal:
-    'Property Excellence Awards is a trading style of B2B Growth Hub Limited Copyright © 2027 All Rights Reserved',
+  email: '',
+  company: '',
+  address: '',
+  legal: '',
 };
 
 /**
@@ -105,8 +102,8 @@ export const STATS = [
 // Short, repeatable reassurance shown beside calls to action.
 export const REASSURE = 'Free to enter · Takes 10 minutes · No payment, ever';
 
-// Wider awards family — Property Excellence Awards sits inside this group.
-export const OFFICIAL_SITE = 'https://propertyexcellenceawards.org/';
+// Canonical public URL for this tenant.
+export const OFFICIAL_SITE = 'https://iconicinfluencerawards.com/';
 
 // Same-origin proxy endpoint. The actual upstream URL + X-API-Key live in
 // app/api/nominate/route.ts (server-side only) so the key never ships in the
@@ -116,7 +113,7 @@ export const NOMINATION_API_URL = '/api/nominate';
 // sessionStorage key used by the Categories page and Find My Award to hand
 // pre-selected award categories to the nomination form without bloating the
 // URL with a long ?categories=… list.
-export const NOMINATION_STORAGE_KEY = 'pea_nominate_preset_v1';
+export const NOMINATION_STORAGE_KEY = 'iia_nominate_preset_v1';
 
 // Per-theme application base URL. Every theme of this programme runs on the
 // one domain, so all six point at the same place — the "Complete Your
@@ -127,17 +124,17 @@ export const THEME_APPLICATION_URLS: Record<
   'agency' | 'development' | 'services' | 'proptech' | 'individual' | 'team',
   string
 > = {
-  agency: 'https://propertyexcellenceawards.org',
-  development: 'https://propertyexcellenceawards.org',
-  services: 'https://propertyexcellenceawards.org',
-  proptech: 'https://propertyexcellenceawards.org',
-  individual: 'https://propertyexcellenceawards.org',
-  team: 'https://propertyexcellenceawards.org',
+  agency: 'https://iconicinfluencerawards.com',
+  development: 'https://iconicinfluencerawards.com',
+  services: 'https://iconicinfluencerawards.com',
+  proptech: 'https://iconicinfluencerawards.com',
+  individual: 'https://iconicinfluencerawards.com',
+  team: 'https://iconicinfluencerawards.com',
 };
 
 // One vision, one environment — the unifying message for the themes.
 export const THEMES_VISION =
-  'Six themes. One vision. One environment where every kind of property excellence is seen, celebrated and connected.';
+  'Six themes. One vision. One environment where every kind of digital influence is seen, celebrated and connected.';
 
 // The themes of the Property Excellence Awards — distinct areas of focus,
 // united by a single vision. Full set retained here; the public `THEMES`
@@ -438,32 +435,32 @@ export const WHY_CARDS = [
   {
     icon: 'BadgeCheck',
     title: 'Build Credibility',
-    body: 'Earn independent industry recognition and the client trust that comes with it.',
+    body: 'Earn independent recognition and the audience trust that comes with it.',
   },
   {
     icon: 'Megaphone',
     title: 'Increase Visibility',
-    body: 'Gain exposure through trade press, social reach and year-round award promotion.',
+    body: 'Gain exposure through press, cross-platform reach and year-round award promotion.',
   },
   {
     icon: 'Users',
-    title: 'Celebrate Your Team',
-    body: 'Honour the people behind your success and give them a moment they will never forget.',
+    title: 'Celebrate Your Community',
+    body: 'Honour the collaborators and community behind your growth — a moment they will never forget.',
   },
   {
     icon: 'Trophy',
-    title: 'Stand Above Competitors',
-    body: 'Differentiate your firm in a crowded market and prove your excellence where it counts.',
+    title: 'Stand Out From the Feed',
+    body: 'Differentiate yourself in a crowded space and prove your influence where it counts.',
   },
   {
     icon: 'Sparkles',
-    title: 'Win More Instructions',
-    body: 'Leverage powerful, third-party social proof that turns valuations into instructions.',
+    title: 'Win More Brand Deals',
+    body: 'Leverage powerful, third-party social proof that turns followers into partnerships.',
   },
   {
     icon: 'TrendingUp',
     title: 'Accelerate Growth',
-    body: 'Open doors to new partnerships, investment, talent and expansion opportunities.',
+    body: 'Open doors to new collaborations, sponsorships and platform opportunities.',
   },
 ];
 
@@ -484,66 +481,69 @@ export const IMPACT_POINTS = [
 export const IMPACT_NOTE =
   'Indicative outcomes reported by award-winning businesses and independent industry research.';
 
+// Illustrative teaser categories shown on the homepage only — the full,
+// confirmed award taxonomy is a separate decision still to be made (see
+// scripts/seed-iconic-influencer-awards.js) and lives on the Categories page.
 export const CATEGORIES = [
   {
     icon: 'Crown',
-    name: 'Property Business of the Year',
-    desc: 'The headline accolade for the standout property business of the year.',
+    name: 'Creator of the Year',
+    desc: 'The headline accolade for the standout creator of the year.',
   },
   {
-    icon: 'Building2',
-    name: 'Estate Agency of the Year',
-    desc: 'For the agency whose service, results and reputation lead the market.',
-  },
-  {
-    icon: 'HardHat',
-    name: 'Property Developer of the Year',
-    desc: 'Recognising the developer behind the year’s most accomplished schemes.',
-  },
-  {
-    icon: 'Home',
-    name: 'Residential Development of the Year',
-    desc: 'For the scheme that sets a new standard in how and where people live.',
-  },
-  {
-    icon: 'Store',
-    name: 'Commercial Development of the Year',
-    desc: 'Honouring the workspace, retail or industrial scheme of the year.',
-  },
-  {
-    icon: 'Lightbulb',
-    name: 'PropTech Business of the Year',
-    desc: 'For the platform or product bringing genuinely new thinking to property.',
-  },
-  {
-    icon: 'Leaf',
-    name: 'Sustainable Development of the Year',
-    desc: 'Recognising schemes leading on carbon, biodiversity and long-term impact.',
-  },
-  {
-    icon: 'Smile',
-    name: 'Customer Service Excellence',
-    desc: 'For the firms that turn every client into a long-term advocate.',
-  },
-  {
-    icon: 'Handshake',
-    name: 'Property Management Company of the Year',
-    desc: 'For the managers keeping buildings, budgets and residents in good order.',
+    icon: 'Sparkles',
+    name: 'Beauty & Lifestyle Creator',
+    desc: 'For the creator whose content, community and influence lead the space.',
   },
   {
     icon: 'Star',
-    name: 'Rising Star in Property',
-    desc: 'Spotlighting the next generation of agents, surveyors and developers.',
+    name: 'Fashion & Style Icon',
+    desc: 'Recognising the voice setting the tone for fashion and personal style.',
+  },
+  {
+    icon: 'Gamepad2',
+    name: 'Gaming & Esports Creator',
+    desc: 'For the streamer or creator building the biggest community in gaming.',
+  },
+  {
+    icon: 'Dumbbell',
+    name: 'Fitness & Wellness Influencer',
+    desc: 'Honouring the creator inspiring healthier, happier audiences at scale.',
+  },
+  {
+    icon: 'UtensilsCrossed',
+    name: 'Food & Culinary Creator',
+    desc: 'For the platform or channel bringing genuinely new flavour to food content.',
+  },
+  {
+    icon: 'Plane',
+    name: 'Travel Content Creator',
+    desc: 'Recognising the creator turning the world into unmissable content.',
+  },
+  {
+    icon: 'Lightbulb',
+    name: 'Tech & Innovation Reviewer',
+    desc: 'For the voice audiences trust before they buy.',
+  },
+  {
+    icon: 'Smile',
+    name: 'Comedy & Entertainment Creator',
+    desc: 'For the creators who turn every feed into a reason to smile.',
+  },
+  {
+    icon: 'Handshake',
+    name: 'Brand Collaboration of the Year',
+    desc: 'For the partnership that turned a creator and a brand into a cultural moment.',
+  },
+  {
+    icon: 'Rocket',
+    name: 'Rising Star Creator',
+    desc: 'Spotlighting the next generation of creators and personalities.',
   },
   {
     icon: 'HeartHandshake',
-    name: 'Community Impact',
-    desc: 'For the businesses whose projects visibly strengthen the places they work in.',
-  },
-  {
-    icon: 'Users',
-    name: 'Top Property Workplace',
-    desc: 'The best places to work in property — culture, wellbeing and people first.',
+    name: 'Community Impact Creator',
+    desc: 'For the creators whose content visibly strengthens the communities they serve.',
   },
 ];
 
@@ -574,7 +574,7 @@ export const JOURNEY = [
     step: '04',
     icon: 'ListChecks',
     title: 'Finalists Announced',
-    body: 'The highest-scoring businesses are revealed and celebrated as finalists.',
+    body: 'The highest-scoring entries are revealed and celebrated as finalists.',
   },
   {
     step: '05',
@@ -653,7 +653,7 @@ export const FAQS = [
   },
   {
     q: 'Can I nominate someone else?',
-    a: 'Absolutely. Clients, colleagues and the wider industry can nominate any business or individual they believe deserves to be recognised. A nomination is a genuine way to champion work you rate.',
+    a: 'Absolutely. Fans, brands, collaborators and the wider industry can nominate any creator or individual they believe deserves to be recognised. A nomination is a genuine way to champion work you rate.',
   },
   {
     q: 'How are entries judged?',
@@ -661,7 +661,7 @@ export const FAQS = [
   },
   {
     q: 'Can I enter more than one category?',
-    a: 'Yes. Many organisations enter several categories to reflect different sides of the business — an agency might enter for service, for growth and for its workplace culture. There is no extra cost.',
+    a: 'Yes. Many creators and brands enter several categories to reflect different sides of their work — a creator might enter for content, for community and for a standout brand collaboration. There is no extra cost.',
   },
   {
     q: 'What do winners actually receive?',
@@ -690,13 +690,13 @@ export function buildFaqs(
   eventDate: string,
   deadlineLabel = '',
 ) {
-  const region = eventCity || 'the region';
+  const region = eventCity || '';
   const where = [venue, eventDate].filter(Boolean).join(' on ');
   return FAQS.map((f) => {
     if (f.q === 'Who is eligible to enter?') {
       return {
         ...f,
-        a: `Any organisation working in or serving the property industry — agencies, developers, contractors, managers, surveyors, lenders, PropTech firms and the people within them. Most categories are open to all sizes and specialisms, whether you are based in ${region} or operating nationally.`,
+        a: `Any creator, brand or platform working across social media, video, audio or written content — influencers, YouTubers, streamers, podcasters, brand marketing teams and the people within them. Most categories are open to all sizes and niches, wherever you are based${region ? `, whether that's ${region} or anywhere else in the world` : ''}.`,
       };
     }
     if (f.q === 'What are the key dates?') {
@@ -711,8 +711,8 @@ export function buildFaqs(
       return {
         ...f,
         a: where
-          ? `Winners are revealed live and in person at the Awards Ceremony at ${where} — the highlight of the ${region} property calendar.`
-          : `Winners are revealed live and in person at the Awards Ceremony — the highlight of the ${region} property calendar.`,
+          ? `Winners are revealed live and in person at the Awards Ceremony at ${where} — the highlight of the creator calendar.`
+          : 'Winners are revealed live and in person at the Awards Ceremony — the highlight of the creator calendar.',
       };
     }
     return f;

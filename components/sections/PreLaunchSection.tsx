@@ -34,7 +34,7 @@ export async function PreLaunchSection() {
             </p>
 
             <p className="mt-6 max-w-md text-base leading-relaxed text-white/55">
-              Some moments in business are bigger than deals or profits — they&apos;re about
+              Some moments are bigger than deals or numbers — they&apos;re about
               recognition, influence, and legacy. The {site.name} Pre-Launch is one of those
               moments. It&apos;s where the journey begins, and where you can choose to be seen,
               heard, and remembered.

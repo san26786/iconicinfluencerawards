@@ -24,7 +24,7 @@ html[data-theme="light"] .theme-logo-dark { display: none; }
    Values are RGB channel triplets so they work with Tailwind's
    rgb(var(--c-xxx) / <alpha-value>) opacity variant pattern.
 
-   These are the Property Excellence Awards defaults and must stay
+   These are the Iconic Influencer Awards defaults and must stay
    in step with PEA_DEFAULTS in lib/site.ts — that fallback is what
    renders when the DB is unreachable, and a mismatch would repaint
    the site mid-outage.
@@ -36,15 +36,15 @@ html[data-theme="light"] .theme-logo-dark { display: none; }
   --font-display: var(--font-playfair), Georgia, serif;
   --font-sans:    var(--font-inter), system-ui, sans-serif;
 
-  /* Property Excellence theme — amber on navy */
-  --c-primary:     255 173 36;  /* #FFAD24 — brand amber          */
-  --c-light:       244 227 161; /* #F4E3A1 — pale gold            */
-  --c-deep:        168 132 42;  /* #A8842A — deep gold            */
-  --c-50:          249 248 244; /* #F9F8F4 — cream tint           */
-  --c-bg:          14 20 36;    /* #0E1424 — navy bg              */
-  --c-bg-slate:    10 15 28;    /* #0A0F1C — deeper navy bg       */
-  --c-bg-warm:     20 19 38;    /* #141326 — warm navy bg         */
-  --c-bg-darkest:  6 10 20;     /* #060A14 — deepest navy         */
+  /* Iconic Influencer theme — magenta/violet on near-black */
+  --c-primary:     217 70 239;  /* #D946EF — brand magenta        */
+  --c-light:       240 171 252; /* #F0ABFC — pale magenta         */
+  --c-deep:        134 25 143;  /* #86198F — deep magenta         */
+  --c-50:          250 245 255; /* #FAF5FF — violet-white tint    */
+  --c-bg:          17 10 26;    /* #110A1A — near-black violet bg */
+  --c-bg-slate:    13 8 20;     /* #0D0814 — deeper violet bg     */
+  --c-bg-warm:     24 12 30;    /* #180C1E — warm violet bg       */
+  --c-bg-darkest:  8 5 13;      /* #08050D — deepest violet       */
 }
 
 /* ── Per-site font overrides ────────────────────────────────────── */

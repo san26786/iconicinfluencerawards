@@ -26,7 +26,7 @@ export function PrimaryButton({
   return (
     <Link
       href={href}
-      className={`${base} ${sizes[size]} overflow-hidden bg-gold-gradient text-ink shadow-gold hover:shadow-[0_22px_60px_-12px_rgba(35, 184, 155,0.65)] hover:-translate-y-0.5 ${className}`}
+      className={`${base} ${sizes[size]} overflow-hidden bg-gold-gradient text-ink shadow-gold hover:shadow-gold hover:-translate-y-0.5 ${className}`}
     >
       <span
         className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/55 to-transparent transition-transform duration-700 group-hover:translate-x-full"

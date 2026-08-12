@@ -18,7 +18,7 @@ const buildPoints = (siteName: string) => [
   {
     icon: Target,
     title: 'Set the Standard',
-    body: 'As an inaugural winner, your business becomes the benchmark every future entrant aspires to match.',
+    body: 'As an inaugural winner, your name becomes the benchmark every future entrant aspires to match.',
   },
   {
     icon: Flag,
@@ -42,7 +42,7 @@ export async function Inaugural() {
               Be among the <span className="text-gold-gradient">very first</span>
             </>
           }
-          subtitle={`This is our first celebration of property excellence — and the rarest edition there will ever be. The founding class of ${site.year} won’t be following a benchmark. They’ll be the benchmark.`}
+          subtitle={`This is our first celebration of digital influence — and the rarest edition there will ever be. The founding class of ${site.year} won’t be following a benchmark. They’ll be the benchmark.`}
         />
 
         <RevealGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>

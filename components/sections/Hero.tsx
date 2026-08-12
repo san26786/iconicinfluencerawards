@@ -1,11 +1,33 @@
 import Image from 'next/image';
-import { Sparkles, ChevronDown, CalendarDays, MapPin, Building2, Layers } from 'lucide-react';
-import { STATS, REASSURE, IMG } from '@/lib/content';
+import {
+  Sparkles,
+  ChevronDown,
+  CalendarDays,
+  MapPin,
+  Ticket,
+  Layers,
+  Instagram,
+  Youtube,
+  Twitch,
+  Twitter,
+  Music2,
+  Podcast,
+} from 'lucide-react';
+import { STATS, REASSURE, IMG, CATEGORY_COUNT } from '@/lib/content';
 import { getSite } from '@/lib/site';
 import { PrimaryButton, GhostButton } from '../ui/Button';
 import { Counter } from '../ui/Counter';
 import { Countdown } from '../ui/Countdown';
 import { Reveal } from '../ui/Reveal';
+
+const PLATFORMS = [
+  { icon: Instagram, label: 'Instagram' },
+  { icon: Music2, label: 'TikTok' },
+  { icon: Youtube, label: 'YouTube' },
+  { icon: Twitch, label: 'Twitch' },
+  { icon: Twitter, label: 'X' },
+  { icon: Podcast, label: 'Podcasts' },
+];
 
 export async function Hero() {
   const site = await getSite();
@@ -72,7 +94,7 @@ export async function Hero() {
             <Reveal className="flex flex-wrap items-center gap-2.5">
               <span className="inline-flex items-center gap-2.5 rounded-full glass-gold px-4 py-2 text-[0.68rem] sm:text-xs font-semibold uppercase tracking-luxe text-gold">
                 <Sparkles className="h-3.5 w-3.5" />
-                {site.venue_short}, {site.event_city} · Award Ceremony
+                Inaugural Award Ceremony · {site.year}
               </span>
             </Reveal>
 
@@ -91,9 +113,9 @@ export async function Hero() {
 
             <Reveal delay={0.24}>
               <p className="mt-4 max-w-xl text-sm sm:text-base leading-relaxed text-white/55">
-                This time next year, a business owner will walk on stage to a standing ovation — their
-                team on their feet, their name in lights. There is no reason that story can&apos;t be
-                yours.
+                This time next year, a creator will walk on stage to a standing ovation — their
+                community cheering them on, their name in lights. There is no reason that story
+                can&apos;t be yours.
               </p>
             </Reveal>
 
@@ -104,7 +126,7 @@ export async function Hero() {
               <PrimaryButton href="/register-interest">Start Your Free Entry</PrimaryButton>
               <GhostButton href="/pre-launch">Join Pre-Launch</GhostButton>
               <GhostButton href="/register-interest#enter-in-under-two-minutes">
-                Nominate a Business You Love
+                Nominate a Creator You Love
               </GhostButton>
               <GhostButton href="/#find-my-award">Find My Awards</GhostButton>
               <GhostButton href="/#your-awards-journey">Your Awards Journey</GhostButton>
@@ -119,8 +141,22 @@ export async function Hero() {
                 href="/categories"
                 className="font-medium text-gold/80 underline-offset-4 transition-colors hover:text-gold hover:underline"
               >
-                Explore the 12 categories →
+                Explore the categories →
               </a>
+            </Reveal>
+
+            <Reveal
+              delay={0.5}
+              className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2"
+            >
+              <span className="text-[0.6rem] font-semibold uppercase tracking-luxe text-white/35">
+                Celebrating creators across
+              </span>
+              <div className="flex items-center gap-3 text-white/40">
+                {PLATFORMS.map((p) => (
+                  <p.icon key={p.label} className="h-4 w-4 transition-colors hover:text-gold" aria-label={p.label} />
+                ))}
+              </div>
             </Reveal>
           </div>
 
@@ -163,10 +199,10 @@ export async function Hero() {
 
 function HeroInfoPanel({ site }: { site: Awaited<ReturnType<typeof getSite>> }) {
   const TILES = [
-    { icon: CalendarDays, label: 'Ceremony',    value: site.event_date_long ?? site.event_date ?? '—' },
-    { icon: Building2,    label: 'Venue',       value: site.venue_short ?? '—' },
-    { icon: MapPin,       label: 'Location',    value: site.event_city ?? '—' },
-    { icon: Layers,       label: 'Award Themes', value: String(site.ceremonies_count) },
+    { icon: CalendarDays, label: 'Ceremony', value: site.event_date_long ?? site.event_date ?? 'Announced Soon' },
+    { icon: MapPin,       label: 'Location', value: site.event_city ?? 'Worldwide' },
+    { icon: Ticket,       label: 'Entry',    value: 'Completely Free' },
+    { icon: Layers,       label: 'Categories', value: `${CATEGORY_COUNT}+ Awards` },
   ];
 
   return (

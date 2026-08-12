@@ -16,7 +16,7 @@ const inputBase =
 
 const SUBJECTS = [
   'Entering the awards',
-  'Nominating a business',
+  'Nominating a creator',
   'Sponsorship & partnerships',
   'Press & media',
   'General enquiry',

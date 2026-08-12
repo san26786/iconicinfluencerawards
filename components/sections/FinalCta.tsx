@@ -13,7 +13,7 @@ export async function FinalCta() {
       {/* Background imagery */}
       <div className="absolute inset-0">
         <Image
-          src={IMG(IMAGES.heroPrimary, 1280, 55)}
+          src={IMG(IMAGES.confetti, 1280, 55)}
           alt=""
           fill
           sizes="(max-width: 768px) 100vw, 1280px"
@@ -42,7 +42,7 @@ export async function FinalCta() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70 text-balance">
-            Join the organisations turning independent recognition into real momentum. Your
+            Join the creators and brands turning independent recognition into real momentum. Your
             strongest year starts with a single entry.
           </p>
 
@@ -53,14 +53,14 @@ export async function FinalCta() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <PrimaryButton href="/register-interest">Start Your Free Entry</PrimaryButton>
-            <GhostButton href="/register-interest?mode=nominate">Nominate a Business You Love</GhostButton>
+            <GhostButton href="/register-interest?mode=nominate">Nominate a Creator You Love</GhostButton>
           </div>
 
           <p className="mt-5 text-sm font-medium text-white/55">{REASSURE}</p>
 
           <p className="mt-3 inline-flex items-center gap-2 text-sm text-white/45">
             <Sparkles className="h-4 w-4 text-gold" />
-            Be one of the first businesses ever recognised at {site.venue_short ?? site.name}.
+            Be one of the first creators ever recognised at {site.venue_short ?? site.name}.
           </p>
         </Reveal>
       </div>

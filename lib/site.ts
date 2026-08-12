@@ -64,59 +64,56 @@ export interface SiteData {
 }
 
 // --------------------------------------------------------------------------
-// Property Excellence Awards defaults — used as fallback when the DB is
+// Iconic Influencer Awards defaults — used as fallback when the DB is
 // unavailable or the domain is unknown. The colours mirror the token defaults
 // in app/globals.css so a DB outage doesn't repaint the site.
 // --------------------------------------------------------------------------
 
 const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
-  domain: 'propertyexcellenceawards.org',
+  domain: 'iconicinfluencerawards.com',
   alt_domains: null,
-  name: 'Property Excellence Awards',
-  slug: 'property-excellence-awards',
-  tagline: 'Recognising the Agencies, Developers and People Shaping the Property Industry.',
-  year: '2026-27',
-  legal: 'Property Excellence Awards is a trading style of B2B Growth Hub Limited Copyright © 2027 All Rights Reserved',
-  // Confirmed ceremony details: 29 October 2026, 10:00–16:30. That date is a
-  // Thursday, and UK clocks go back on the 25th that year, so the 29th is GMT.
-  // The window itself lives in CEREMONY_WINDOW (lib/content.ts).
-  //
-  // The deadline and phone stay null: neither is confirmed, and this object is
-  // what renders when the DB is unreachable — a guess here would republish
-  // invented facts into the page copy, the sitemap and the Event JSON-LD.
-  event_date: '29 Oct 2026',
-  event_date_long: 'Thu, 29 October 2026',
-  event_date_iso: '2026-10-29T10:00:00+00:00',
+  name: 'Iconic Influencer Awards',
+  slug: 'iconic-influencer-awards',
+  tagline: 'Celebrating the Creators, Brands and Platforms Shaping Digital Influence.',
+  year: '2026',
+  legal: null,
+  // Venue, date and contact details are not confirmed yet. These stay null
+  // rather than being guessed — a guess here would republish invented facts
+  // into the page copy, the sitemap and the Event JSON-LD the moment the DB
+  // is unreachable.
+  event_date: null,
+  event_date_long: null,
+  event_date_iso: null,
   event_deadline_iso: null,
   event_deadline_label: null,
-  event_city: 'Cardiff',
-  venue: 'Cardiff City Stadium, Cardiff',
-  venue_short: 'Cardiff City Stadium',
+  event_city: null,
+  venue: null,
+  venue_short: null,
   ceremonies_count: 1,
-  email: 'organiser@propertyexcellenceawards.org',
+  email: null,
   phone_display: null,
   phone_href: null,
-  company: 'B2B Growth Hub Limited',
-  address: 'Level 30, The Leadenhall Building, 122 Leadenhall St, London EC3V 4AB, United Kingdom',
-  official_site: 'https://propertyexcellenceawards.org/',
+  company: null,
+  address: null,
+  official_site: 'https://iconicinfluencerawards.com/',
   social_facebook: null,
   social_instagram: null,
   social_linkedin: null,
   social_x: null,
-  theme_primary: '255 173 36',
-  theme_light: '244 227 161',
-  theme_deep: '168 132 42',
-  theme_50: '249 248 244',
-  theme_bg: '14 20 36',
-  theme_bg_slate: '10 15 28',
-  theme_bg_warm: '20 19 38',
-  theme_bg_darkest: '6 10 20',
-  hero_image_id: 'photo-1486406146926-c627a92ad1ab',
+  theme_primary: '217 70 239',
+  theme_light: '240 171 252',
+  theme_deep: '134 25 143',
+  theme_50: '250 245 255',
+  theme_bg: '17 10 26',
+  theme_bg_slate: '13 8 20',
+  theme_bg_warm: '24 12 30',
+  theme_bg_darkest: '8 5 13',
+  hero_image_id: null,
   hero_video_url: null,
   categories: [],
   ga_id: null,
   is_active: true,
-  design_variant: 'corporate',
+  design_variant: 'luxury',
   logo_url: null,
   logo_url_light: null,
   font_display: 'playfair',
@@ -134,7 +131,7 @@ const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
 // Map local test hostnames → production domains so a tenant can be exercised
 // under its real domain by editing the hosts file (see README dev section).
 const LOCAL_DOMAIN_MAP: Record<string, string> = {
-  'pea.local': 'propertyexcellenceawards.org',
+  'iia.local': 'iconicinfluencerawards.com',
 };
 
 export const getSite = cache(async (): Promise<SiteData> => {
@@ -150,7 +147,7 @@ export const getSite = cache(async (): Promise<SiteData> => {
   // Also resolve .local test domains → real production domains.
   const effectiveDomain =
     !domain || domain === 'localhost'
-      ? (process.env.DEV_SITE_DOMAIN ?? 'propertyexcellenceawards.org')
+      ? (process.env.DEV_SITE_DOMAIN ?? 'iconicinfluencerawards.com')
       : (LOCAL_DOMAIN_MAP[domain] ?? domain);
 
   try {
