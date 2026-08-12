@@ -108,14 +108,14 @@ const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
   theme_bg_slate: '13 8 20',
   theme_bg_warm: '24 12 30',
   theme_bg_darkest: '8 5 13',
-  hero_image_id: null,
+  hero_image_id: '/iconic.png',
   hero_video_url: null,
   categories: [],
   ga_id: null,
   is_active: true,
   design_variant: 'luxury',
-  logo_url: null,
-  logo_url_light: null,
+  logo_url: '/Iconic-Influencer-Awards-Logo-Dark.png',
+  logo_url_light: '/Iconic-Influencer-Awards-Logo-Light.png',
   font_display: 'playfair',
   font_body: 'inter',
 };
@@ -132,6 +132,7 @@ const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
 // under its real domain by editing the hosts file (see README dev section).
 const LOCAL_DOMAIN_MAP: Record<string, string> = {
   'iia.local': 'iconicinfluencerawards.com',
+  '192.168.0.105': 'iconicinfluencerawards.com',
 };
 
 export const getSite = cache(async (): Promise<SiteData> => {
