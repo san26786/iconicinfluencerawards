@@ -69,8 +69,8 @@ export interface SiteData {
 // in app/globals.css so a DB outage doesn't repaint the site.
 // --------------------------------------------------------------------------
 
-const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
-  domain: 'iconicinfluencerawards.com',
+const ICONIC_DEFAULTS: Omit<SiteData, 'id'> = {
+  domain: 'iconicinfluencerawards.org',
   alt_domains: null,
   name: 'Iconic Influencer Awards',
   slug: 'iconic-influencer-awards',
@@ -95,7 +95,7 @@ const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
   phone_href: null,
   company: null,
   address: null,
-  official_site: 'https://iconicinfluencerawards.com/',
+  official_site: 'https://iconicinfluencerawards.org/',
   social_facebook: null,
   social_instagram: null,
   social_linkedin: null,
@@ -131,8 +131,8 @@ const PEA_DEFAULTS: Omit<SiteData, 'id'> = {
 // Map local test hostnames → production domains so a tenant can be exercised
 // under its real domain by editing the hosts file (see README dev section).
 const LOCAL_DOMAIN_MAP: Record<string, string> = {
-  'iia.local': 'iconicinfluencerawards.com',
-  '192.168.0.105': 'iconicinfluencerawards.com',
+  'iia.local': 'iconicinfluencerawards.org',
+  '192.168.0.105': 'iconicinfluencerawards.org',
 };
 
 export const getSite = cache(async (): Promise<SiteData> => {
@@ -148,7 +148,7 @@ export const getSite = cache(async (): Promise<SiteData> => {
   // Also resolve .local test domains → real production domains.
   const effectiveDomain =
     !domain || domain === 'localhost'
-      ? (process.env.DEV_SITE_DOMAIN ?? 'iconicinfluencerawards.com')
+      ? (process.env.DEV_SITE_DOMAIN ?? 'iconicinfluencerawards.org')
       : (LOCAL_DOMAIN_MAP[domain] ?? domain);
 
   try {
@@ -177,7 +177,7 @@ export const getSite = cache(async (): Promise<SiteData> => {
   // when the domain is unknown or the DB is unreachable. Returning a real
   // site's id here would let a transient DB error attribute nominations,
   // registrations and email jobs to a tenant that didn't submit them.
-  return { id: 0, ...PEA_DEFAULTS };
+  return { id: 0, ...ICONIC_DEFAULTS };
 });
 
 // --------------------------------------------------------------------------

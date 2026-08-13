@@ -103,7 +103,7 @@ export const STATS = [
 export const REASSURE = 'Free to enter · Takes 10 minutes · No payment, ever';
 
 // Canonical public URL for this tenant.
-export const OFFICIAL_SITE = 'https://iconicinfluencerawards.com/';
+export const OFFICIAL_SITE = 'https://iconicinfluencerawards.org/';
 
 // Same-origin proxy endpoint. The actual upstream URL + X-API-Key live in
 // app/api/nominate/route.ts (server-side only) so the key never ships in the
@@ -124,19 +124,19 @@ export const THEME_APPLICATION_URLS: Record<
   'agency' | 'development' | 'services' | 'proptech' | 'individual' | 'team',
   string
 > = {
-  agency: 'https://iconicinfluencerawards.com',
-  development: 'https://iconicinfluencerawards.com',
-  services: 'https://iconicinfluencerawards.com',
-  proptech: 'https://iconicinfluencerawards.com',
-  individual: 'https://iconicinfluencerawards.com',
-  team: 'https://iconicinfluencerawards.com',
+  agency: 'https://iconicinfluencerawards.org',
+  development: 'https://iconicinfluencerawards.org',
+  services: 'https://iconicinfluencerawards.org',
+  proptech: 'https://iconicinfluencerawards.org',
+  individual: 'https://iconicinfluencerawards.org',
+  team: 'https://iconicinfluencerawards.org',
 };
 
 // One vision, one environment — the unifying message for the themes.
 export const THEMES_VISION =
   'Six themes. One vision. One environment where every kind of digital influence is seen, celebrated and connected.';
 
-// The themes of the Property Excellence Awards — distinct areas of focus,
+// The themes of the Iconic Influencer Awards — distinct areas of focus,
 // united by a single vision. Full set retained here; the public `THEMES`
 // export below filters out any theme currently hidden from the site.
 export const ALL_THEMES = [
