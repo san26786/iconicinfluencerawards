@@ -195,7 +195,7 @@ export function QuestionLibraryClient({
   }
 
   async function seed() {
-    if (!confirm('Seed the library with the Property Excellence Awards question set and auto-assign the eligibility questions to the featured event?')) return;
+    if (!confirm('Seed the library with the Iconic Influencer Awards question set and auto-assign the eligibility questions to the featured event?')) return;
     setSeeding(true); setSeedMsg('');
     try {
       const res = await fetch('/api/organiser/seed-property-questions', { method: 'POST' });
@@ -337,7 +337,7 @@ export function QuestionLibraryClient({
           {/* Seed button */}
           <div className="flex items-center justify-between rounded-2xl border border-gold/20 bg-gold/5 p-4">
             <div>
-              <p className="text-sm font-semibold text-gold">Property Excellence Questions Seed Karo</p>
+              <p className="text-sm font-semibold text-gold">Iconic Influencer Questions Seed Karo</p>
               <p className="text-xs text-white/40 mt-0.5">
                 10 eligibility + 4 category-specific questions per award category add honge.
                 Eligibility questions featured event me auto-assign honge.

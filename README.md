@@ -33,7 +33,7 @@ per-request from the `sites` DB row and injected on `<html>` by `app/layout.tsx`
 
 ## Homepage sections
 
-1. Hero — "Recognising Property Excellence", event strip, three CTAs, stat tiles
+1. Hero — "Recognising Iconic Influence", event strip, three CTAs, stat tiles
 2. Countdown + headline stats
 3. Find My Award — three-question category recommender
 4. Why Enter — benefits plus sample category cards
@@ -69,7 +69,7 @@ npm start
 ```
 
 `DEV_SITE_DOMAIN` in `.env.local` decides which `sites` row `localhost` resolves to — see
-`getSite()` in `lib/site.ts`. Without it, requests fall back to the Property Excellence
+`getSite()` in `lib/site.ts`. Without it, requests fall back to the Iconic Influencer
 Awards defaults baked into that file.
 
 ## Database

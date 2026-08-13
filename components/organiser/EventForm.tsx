@@ -135,7 +135,7 @@ export function EventForm({ initial }: { initial?: Partial<EventData> }) {
           type="text"
           required
           defaultValue={initial?.title ?? ''}
-          placeholder="e.g. Property Excellence Awards 2027"
+          placeholder="e.g. Iconic Influencer Awards 2027"
           className={inputBase}
           disabled={saving}
         />

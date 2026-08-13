@@ -8,7 +8,7 @@ export default function Loading() {
         <TrophyMark className="h-12 w-12 animate-pulse-glow" />
       </div>
       <p className="mt-6 text-xs font-semibold uppercase tracking-luxe text-gold/70">
-        Property Excellence Awards
+        Iconic Influencer Awards
       </p>
     </div>
   );

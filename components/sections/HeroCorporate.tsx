@@ -74,7 +74,7 @@ export async function HeroCorporate() {
         <Reveal delay={0.1}>
           <h1 className="mx-auto max-w-4xl font-display text-5xl font-bold leading-[1.05] text-white sm:text-6xl lg:text-[5rem]">
             Recognising{' '}
-            <span className="text-gold-shimmer">Property Excellence</span>
+            <span className="text-gold-shimmer">Iconic Influence</span>
           </h1>
         </Reveal>
 

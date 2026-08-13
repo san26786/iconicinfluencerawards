@@ -11,7 +11,7 @@ import { Reveal, RevealGroup, RevealItem } from '@/components/ui/Reveal';
 export const metadata: Metadata = {
   title: 'Partner & Sponsor',
   description:
-    'Partner with the Property Excellence Awards. Put your brand centre stage in front of the industry’s most ambitious agencies, developers and specialists through sponsorship, hospitality and media.',
+    'Partner with the Iconic Influencer Awards. Put your brand centre stage in front of the industry’s most ambitious creators, brands and platforms through sponsorship, hospitality and media.',
 };
 
 const REASONS = [

@@ -1,7 +1,7 @@
 /**
  * Typographic fallback for the site's logo.
  *
- * No Property Excellence Awards logo asset exists yet, and shipping another
+ * No Iconic Influencer Awards logo asset ships in this repo, and shipping another
  * brand's mark in its place is worse than shipping none — so until a real logo
  * is uploaded (organiser → Site Settings, which writes sites.logo_url), the
  * header and footer render the site name as a wordmark.

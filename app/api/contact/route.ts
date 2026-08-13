@@ -19,7 +19,7 @@
 //   Content-Type: application/json
 //
 //   {
-//     "site":         "Property Excellence Awards",    // site.name
+//     "site":         "Iconic Influencer Awards",    // site.name
 //     "siteId":       "property-excellence-awards",    // site.slug (kebab-case)
 //     "submittedAt":  "2026-06-07T14:32:11.000Z",      // ISO 8601 UTC
 //     "name":         "Jane Smith",                    // required

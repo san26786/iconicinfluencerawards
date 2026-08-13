@@ -68,7 +68,7 @@ const ELIGIBILITY_QUESTIONS = [
     options: ['Yes – Advanced Reporting Systems', 'Yes – Basic KPI Tracking', 'Limited Tracking', 'No Formal Tracking'],
   },
   {
-    question_text: 'Why are you entering the Property Excellence Awards?',
+    question_text: 'Why are you entering the Iconic Influencer Awards?',
     field_type: 'select',
     options: ['Industry Recognition', 'Brand Visibility', 'Credibility & Trust', 'Team Motivation', 'Business Growth', 'Networking Opportunities', 'Partnership Opportunities', 'Investment & Expansion Visibility'],
   },

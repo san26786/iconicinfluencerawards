@@ -126,7 +126,7 @@ export function EmailSetupClient() {
           </div>
           <div>
             <label className={lbl}>SMTP Username (email)</label>
-            <input className={inp} placeholder="organiser@propertyexcellenceawards.org"
+            <input className={inp} placeholder="organiser@iconicinfluencerawards.org"
               value={form.smtp_user} onChange={e => setForm(f => ({ ...f, smtp_user: e.target.value }))} />
           </div>
           <div>
@@ -136,7 +136,7 @@ export function EmailSetupClient() {
           </div>
           <div className="col-span-2">
             <label className={lbl}>From Address</label>
-            <input className={inp} placeholder='Property Excellence Awards <organiser@propertyexcellenceawards.org>'
+            <input className={inp} placeholder='Iconic Influencer Awards <organiser@iconicinfluencerawards.org>'
               value={form.email_from} onChange={e => setForm(f => ({ ...f, email_from: e.target.value }))} />
           </div>
         </div>

@@ -73,7 +73,7 @@ export default async function AboutEventPage() {
                 The Mission
               </span>
               <h2 className="font-display text-3xl font-semibold leading-tight text-white sm:text-4xl text-balance">
-                An epicentre of <span className="text-gold-gradient">property excellence</span>
+                An epicentre of <span className="text-gold-gradient">iconic influence</span>
               </h2>
               <div className="mt-5 space-y-4 leading-relaxed text-white/60">
                 <p>

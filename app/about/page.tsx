@@ -13,16 +13,16 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About the Property Excellence Awards — an independent, judge-led celebration of the agencies, developers, specialists and people setting the standard across the property industry.',
+    'About the Iconic Influencer Awards — an independent, judge-led celebration of the creators, brands, platforms and people setting the standard across digital influence.',
 };
 
 const PILLARS = [
-  { icon: 'Trophy', title: 'Property Excellence', body: 'Honouring the firms setting the standard across agency, development and property services.' },
-  { icon: 'Lightbulb', title: 'Innovation', body: 'Championing the PropTech, products and thinking that move a traditional industry forward.' },
-  { icon: 'Star', title: 'Leadership', body: 'Celebrating the entrepreneurs, agents and leaders with the vision to raise the bar.' },
-  { icon: 'HeartHandshake', title: 'Community Impact', body: 'Recognising the schemes and programmes that visibly strengthen the places they touch.' },
-  { icon: 'Megaphone', title: 'Publicity & Profile', body: 'Putting deserving firms in the spotlight through trade media and award promotion.' },
-  { icon: 'TrendingUp', title: 'Growth', body: 'Creating the connections and credibility that open doors to new instructions and investment.' },
+  { icon: 'Trophy', title: 'Iconic Influence', body: 'Honouring the creators setting the standard across content, community and reach.' },
+  { icon: 'Lightbulb', title: 'Innovation', body: 'Championing the formats, platforms and thinking that move digital storytelling forward.' },
+  { icon: 'Star', title: 'Leadership', body: 'Celebrating the creators, founders and voices with the vision to raise the bar.' },
+  { icon: 'HeartHandshake', title: 'Community Impact', body: 'Recognising the campaigns and causes that visibly strengthen the audiences they reach.' },
+  { icon: 'Megaphone', title: 'Publicity & Profile', body: 'Putting deserving creators in the spotlight through trade media and award promotion.' },
+  { icon: 'TrendingUp', title: 'Growth', body: 'Creating the connections and credibility that open doors to new partnerships and investment.' },
 ];
 
 export default async function AboutPage() {
@@ -118,10 +118,10 @@ export default async function AboutPage() {
             eyebrow="What We Celebrate"
             title={
               <>
-                Six pillars of <span className="text-gold-gradient">property excellence</span>
+                Six pillars of <span className="text-gold-gradient">iconic influence</span>
               </>
             }
-            subtitle="Every award is built around the qualities that define a truly outstanding property business."
+            subtitle="Every award is built around the qualities that define a truly outstanding creator."
           />
           <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
             {PILLARS.map((p) => (
