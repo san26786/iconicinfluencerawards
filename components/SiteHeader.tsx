@@ -17,9 +17,10 @@ const ALWAYS_SOLID: ReadonlySet<string> = new Set(['/brochure']);
 
 // Portals shown in dropdown — Judge first, then Partner, then Organiser
 const PORTALS = [
-  { label: 'Judge',     icon: Scale,    href: '/judge',     role: 'judge'     },
-  { label: 'Partner',   icon: Users,    href: '/account',   role: 'partner'   },
-  { label: 'Organiser', icon: Briefcase, href: '/organiser', role: 'organiser' },
+  { label: 'Judge',      icon: Scale,     href: '/judge',     role: 'judge'     },
+  { label: 'My Account', icon: User,      href: '/account',   role: 'visitor'   },
+  { label: 'Partner',    icon: Users,     href: '/account',   role: 'partner'   },
+  { label: 'Organiser',  icon: Briefcase, href: '/organiser', role: 'organiser' },
 ] as const;
 
 const JUDGE_MENU = [
@@ -104,8 +105,25 @@ function SignInDropdown({ user, onSignOut }: { user: { email: string; firstName?
     return <div className="h-4 w-16 animate-pulse rounded-full bg-white/10" aria-hidden />;
   }
 
-  const label = user ? (user.firstName || user.email.split('@')[0]) : 'Sign in';
-  const isJudge = user?.role === 'judge';
+  // Signed out: a plain link, no menu.
+  //
+  // This used to open a "Login as — Judge / Partner / Organiser" dropdown whose
+  // three entries all pointed at /login. Three doors, one room: it asked visitors
+  // to pick a role before signing in when the role comes from their account, and
+  // it contradicted the sign-in page's own "one account, every role" message.
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className="whitespace-nowrap text-sm text-white/70 transition-colors hover:text-white"
+      >
+        Sign in
+      </Link>
+    );
+  }
+
+  const label = user.firstName || user.email.split('@')[0];
+  const isJudge = user.role === 'judge';
 
   return (
     <div ref={ref} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
@@ -122,7 +140,7 @@ function SignInDropdown({ user, onSignOut }: { user: { email: string; firstName?
           <div className="rounded-2xl border border-white/10 bg-ink/95 py-2 shadow-2xl backdrop-blur-md">
 
             {/* Signed-in user header */}
-            {user && (
+            {(
               <div className="px-4 py-3 border-b border-white/10">
                 <p className="text-xs font-bold text-white uppercase tracking-wide truncate">
                   {user.firstName || user.email.split('@')[0]}
@@ -132,7 +150,7 @@ function SignInDropdown({ user, onSignOut }: { user: { email: string; firstName?
             )}
 
             {/* Judge sub-menu (only when signed in as judge) */}
-            {user && isJudge && (
+            {isJudge && (
               <div className="border-b border-white/10 pb-1 mb-1">
                 {JUDGE_MENU.map(({ label: lbl, icon: Icon, href }) => (
                   <Link
@@ -148,15 +166,14 @@ function SignInDropdown({ user, onSignOut }: { user: { email: string; firstName?
               </div>
             )}
 
-            {/* All three portals — Judge, Partner, Organiser */}
+            {/* Only the portal this account actually has.
+                The other roles used to be listed here as "… Login" links pointing
+                at /login, which for someone already signed in just bounced them
+                back to where they came from. */}
             <div className="pt-1">
-              {!user && (
-                <p className="px-4 pb-1 text-[11px] text-white/35 uppercase tracking-wider">Login as</p>
-              )}
-              {PORTALS.map(p => {
-                const isActive = user?.role === p.role;
+              {PORTALS.filter(p => p.role === user.role).map(p => {
                 const Icon = p.icon;
-                return isActive ? (
+                return (
                   <Link
                     key={p.role}
                     href={p.href}
@@ -166,22 +183,12 @@ function SignInDropdown({ user, onSignOut }: { user: { email: string; firstName?
                     <Icon className="h-4 w-4" />
                     {p.label} Portal
                   </Link>
-                ) : (
-                  <Link
-                    key={p.role}
-                    href="/login"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
-                  >
-                    <Icon className="h-4 w-4 text-white/30" />
-                    {p.label} Login
-                  </Link>
                 );
               })}
             </div>
 
             {/* Sign out */}
-            {user && (
+            {(
               <div className="border-t border-white/10 mt-1 pt-1">
                 <button
                   onClick={() => { setOpen(false); onSignOut(); }}
