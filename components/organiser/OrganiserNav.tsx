@@ -57,6 +57,9 @@ const LINKS: { href: string; label: string; icon: React.ElementType; exact?: boo
   { href: "/organiser/unsubscribes", label: "Unsubscribes", icon: Ban },
   { href: "/organiser/question-library", label: "Question Library", icon: BookOpen },
   { href: "/hub/sites", label: "Hub — Sites", icon: Building2 },
+  // Last, next to the dashboard everyone lands on: the place you look when you
+  // do not know where to look.
+  { href: "/organiser/guide", label: "User Guide", icon: BookOpen },
 ];
 
 export function OrganiserNav() {
