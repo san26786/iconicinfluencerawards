@@ -116,7 +116,16 @@ export async function SiteFooter() {
         <div className="mt-14 gold-rule" />
         <div className="mt-6 flex flex-col items-center justify-between gap-4 text-xs text-white/60 sm:flex-row">
           <p className="text-center sm:text-left">{site.legal}</p>
-          <div className="flex items-center gap-6">
+          {/*
+            The guides sit here, in the row people already scan for help, and
+            not only behind a login. They open without signing in on purpose —
+            the nomination email and the panel invitation reach people before
+            they have an account, and until now the only way to those pages was
+            a dashboard they could not get to yet.
+          */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <Link href="/account/guide" className="hover:text-white">Entrant guide</Link>
+            <Link href="/judges/guide" className="hover:text-white">Judge guide</Link>
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
             <Link href="/terms" className="hover:text-white">Terms</Link>
             <Link href="/contact" className="hover:text-white">Contact</Link>
