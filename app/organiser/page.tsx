@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import { getSessionUser } from '@/lib/auth';
 import { query } from '@/lib/db';
-import { getSiteId } from '@/lib/site';
+import { contactsByEmail, contactsByEmailAndSite } from '@/lib/organiser/contacts';
+import { getSite, getSiteId } from '@/lib/site';
 import {
   OrganiserDashboard,
   type NominationItem,
@@ -24,6 +25,7 @@ const dateFmt = new Intl.DateTimeFormat('en-GB', {
 });
 
 const fmt = (d: Date | string | null): string => (d ? dateFmt.format(new Date(d)) : '—');
+const iso = (d: Date | string | null): string | null => (d ? new Date(d).toISOString() : null);
 const fullName = (first: string | null, last: string | null) =>
   [first, last].filter(Boolean).join(' ');
 
@@ -34,6 +36,7 @@ export default async function OrganiserPage() {
 
   // Organisers only ever see their own site's nominations.
   const siteId = await getSiteId();
+  const site = await getSite().catch(() => null);
 
   const [visitorsRes, nominationsRes] = await Promise.all([
     query<{
@@ -44,9 +47,20 @@ export default async function OrganiserPage() {
       phone: string | null;
       is_active: boolean;
       created_at: Date;
+      site_id: number | null;
+      site_name: string | null;
     }>(
-      `SELECT id, email, first_name, last_name, phone, is_active, created_at
-       FROM users WHERE role = 'visitor' ORDER BY created_at DESC`,
+      // Registered accounts are deliberately NOT scoped to one site: an account
+      // is one person across the network, and an organiser looking one up needs
+      // to find them whichever brand they signed up on. What the list has to
+      // carry, then, is which brand that was — an unlabelled row leaves the
+      // organiser guessing whether a stranger is theirs or another site's.
+      `SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.is_active, u.created_at,
+              u.site_id, s.name AS site_name
+         FROM users u
+         LEFT JOIN sites s ON s.id = u.site_id
+        WHERE u.role = 'visitor'
+        ORDER BY u.created_at DESC`,
     ),
     query<{
       id: number;
@@ -78,6 +92,28 @@ export default async function OrganiserPage() {
     ),
   ]);
 
+  // What the contact list already knows about these people, for the downloads.
+  //
+  // Both exports leave this screen for a call sheet or a CRM, and the row on
+  // its own is thin: a nomination holds what the entrant typed into the form, an
+  // account holds what somebody typed into a sign-up box. Where there is no
+  // contact record the export still carries every field the row itself holds.
+  //
+  // Two lookups because the two lists are scoped differently: nominations are
+  // this site's, so they match this site's contacts; accounts are network-wide,
+  // so each one matches the contacts of the site it signed up on.
+  const [nominationContacts, visitorContacts] = await Promise.all([
+    contactsByEmail(
+      nominationsRes.rows.map((n) => n.nominee_email || n.nominator_email || ''),
+      siteId,
+    ),
+    contactsByEmailAndSite(
+      visitorsRes.rows.map((v) => ({ email: v.email, siteId: v.site_id })),
+    ),
+  ]);
+
+  const contactKey = (email: string | null) => (email ?? '').trim().toLowerCase();
+
   const visitors: VisitorItem[] = visitorsRes.rows.map((v) => ({
     id: v.id,
     name: fullName(v.first_name, v.last_name) || '—',
@@ -85,6 +121,16 @@ export default async function OrganiserPage() {
     phone: v.phone,
     active: v.is_active,
     registered: fmt(v.created_at),
+    // Accounts predating the site_id column carry no site at all. "Unknown"
+    // rather than this site's name: guessing would file another brand's
+    // sign-ups under whoever happens to be looking.
+    site: v.site_name ?? (v.site_id ? `Site ${v.site_id}` : 'Unknown'),
+    ownSite: v.site_id === siteId,
+    firstName: v.first_name,
+    lastName: v.last_name,
+    siteId: v.site_id,
+    registeredIso: iso(v.created_at),
+    contact: visitorContacts.get(`${v.site_id}:${contactKey(v.email)}`) ?? null,
   }));
 
   const nominations: NominationItem[] = nominationsRes.rows.map((n) => ({
@@ -102,6 +148,10 @@ export default async function OrganiserPage() {
     businessLocation: n.business_location,
     businessCategory: n.business_category,
     submitted: fmt(n.submitted_at ?? n.created_at),
+    submittedIso: iso(n.submitted_at),
+    createdIso: iso(n.created_at),
+    contact:
+      nominationContacts.get(contactKey(n.nominee_email || n.nominator_email)) ?? null,
   }));
 
   return (
@@ -116,7 +166,11 @@ export default async function OrganiserPage() {
           </p>
         </div>
 
-        <OrganiserDashboard visitors={visitors} nominations={nominations} />
+        <OrganiserDashboard
+          visitors={visitors}
+          nominations={nominations}
+          site={site?.slug || site?.name || ''}
+        />
       </div>
     </main>
   );

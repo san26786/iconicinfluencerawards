@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Download,
   Eye,
   KeyRound,
   Loader2,
@@ -30,6 +31,15 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { toCsv } from "@/lib/csv";
+import {
+  CONTACT_HEADERS,
+  contactCells,
+  customCells,
+  customColumns,
+  type ContactFull,
+} from "@/lib/organiser/contactExport";
+import { exportFilename } from "@/lib/organiser/exportName";
 
 export type VisitorItem = {
   id: number;
@@ -38,6 +48,19 @@ export type VisitorItem = {
   phone: string | null;
   active: boolean;
   registered: string;
+  /** The brand they registered on — this list spans the whole network. */
+  site: string;
+  /** True when that brand is the one the organiser is currently looking at. */
+  ownSite: boolean;
+  // On the record and in the export, though the table shows the joined name and
+  // the readable date. A spreadsheet sorts by surname and by timestamp; neither
+  // can be done to "Jane Okafor" or to "03 Sep 2026, 14:20".
+  firstName: string | null;
+  lastName: string | null;
+  siteId: number | null;
+  registeredIso: string | null;
+  /** The contact record behind this address, on the site they signed up on. */
+  contact: ContactFull | null;
 };
 
 export type NominationItem = {
@@ -55,6 +78,11 @@ export type NominationItem = {
   businessLocation: string | null;
   businessCategory: string | null;
   submitted: string;
+  /** The exact times, for a spreadsheet to sort by rather than to read. */
+  submittedIso: string | null;
+  createdIso: string | null;
+  /** This site's contact record for the nominee, or the nominator when anonymous. */
+  contact: ContactFull | null;
 };
 
 type Tab = "users" | "nominations";
@@ -62,9 +90,12 @@ type Tab = "users" | "nominations";
 export function OrganiserDashboard({
   visitors,
   nominations,
+  site = "",
 }: {
   visitors: VisitorItem[];
   nominations: NominationItem[];
+  /** This site's slug, so a download says which site it came from. */
+  site?: string;
 }) {
   const [tab, setTab] = useState<Tab>("users");
 
@@ -84,9 +115,9 @@ export function OrganiserDashboard({
 
       <div className="mt-5">
         {tab === "users" ? (
-          <RegisteredUsersManager visitors={visitors} />
+          <RegisteredUsersManager visitors={visitors} site={site} />
         ) : (
-          <NominationsManager nominations={nominations} />
+          <NominationsManager nominations={nominations} site={site} />
         )}
       </div>
     </div>
@@ -126,10 +157,39 @@ type ConfirmState = { ids: number[]; active: boolean } | null;
 // Lightweight result banner (success or error), optionally with a link to copy.
 type Toast = { kind: "ok" | "err"; msg: string; link?: string } | null;
 
-function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
+/**
+ * The account, in the order a spreadsheet wants to read it.
+ *
+ * `site` is not the last column an afterthought would make it: this list spans
+ * the whole network, so which brand a row belongs to is the first thing anybody
+ * sorting the file will group by.
+ *
+ * The name and phone columns are prefixed `account_`, and the contact record's
+ * own versions follow under the shared contact headings. They disagree often
+ * enough to be worth carrying twice — somebody signs up as "Jan" and was
+ * imported as "Janet Okafor, Head of Ops" — and two columns called `name` make
+ * a file that spreadsheets and importers both read wrong.
+ */
+const USER_CSV_HEADERS = [
+  'id', 'site', 'site_id', 'account_name', 'account_first_name', 'account_last_name',
+  'email', 'account_phone', 'status', 'registered', 'registered_at',
+];
+
+function RegisteredUsersManager({
+  visitors,
+  site = "",
+}: {
+  visitors: VisitorItem[];
+  /** This site's slug, so a download says which site it came from. */
+  site?: string;
+}) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  // "mine" is the common case — this brand's own sign-ups — but it is not the
+  // default, because the whole point of an unscoped list is finding the person
+  // who registered somewhere else.
+  const [siteFilter, setSiteFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -139,22 +199,33 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
 
+  /** Every brand present in the list, for the site filter. */
+  const siteNames = useMemo(() => {
+    const set = new Set<string>();
+    visitors.forEach((v) => set.add(v.site));
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [visitors]);
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return visitors.filter((v) => {
       if (statusFilter === "active" && !v.active) return false;
       if (statusFilter === "inactive" && v.active) return false;
+      if (siteFilter === "mine" && !v.ownSite) return false;
+      else if (siteFilter !== "all" && siteFilter !== "mine" && v.site !== siteFilter) return false;
       if (q) {
-        const hay = [v.name, v.email, v.phone].filter(Boolean).join(" ").toLowerCase();
+        // The site name is searchable too, so "cardiff" finds that brand's
+        // sign-ups without reaching for the dropdown.
+        const hay = [v.name, v.email, v.phone, v.site].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [visitors, search, statusFilter]);
+  }, [visitors, search, statusFilter, siteFilter]);
 
   useEffect(() => {
     setPage(1);
-  }, [search, statusFilter, pageSize]);
+  }, [search, statusFilter, siteFilter, pageSize]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const current = Math.min(page, totalPages);
@@ -248,6 +319,52 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
     }
   };
 
+  // What is on screen, not the whole table: the filters are how an organiser
+  // says which people they mean, and a download that ignored them would answer
+  // a question nobody asked.
+  const exportCsv = () => {
+    // Whatever else these particular contacts were imported with — every source
+    // list carries a different set, so it is read off the rows going into this
+    // file rather than assumed.
+    const extra = customColumns(
+      filtered.map((v) => v.contact),
+      [...USER_CSV_HEADERS, ...CONTACT_HEADERS],
+    );
+    const csv = toCsv(
+      [...USER_CSV_HEADERS, ...CONTACT_HEADERS, ...extra],
+      filtered.map((v) => ({
+        id: v.id,
+        site: v.site,
+        site_id: v.siteId ?? "",
+        account_name: v.name === "—" ? "" : v.name,
+        account_first_name: v.firstName ?? "",
+        account_last_name: v.lastName ?? "",
+        email: v.email,
+        account_phone: v.phone ?? "",
+        status: v.active ? "Active" : "Inactive",
+        // Both: one to read, one to sort by.
+        registered: v.registered,
+        registered_at: v.registeredIso ?? "",
+        // Blank across the contact columns where the contact list has never
+        // held this person — the account's own fields above still stand.
+        ...contactCells(v.contact),
+        ...customCells(v.contact, extra),
+      })),
+    );
+    const url = URL.createObjectURL(
+      new Blob([csv], { type: "text/csv;charset=utf-8;" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = exportFilename(site, "registered-users");
+    a.click();
+    URL.revokeObjectURL(url);
+    setToast({
+      kind: "ok",
+      msg: `Exported ${filtered.length} user${filtered.length === 1 ? "" : "s"} to CSV.`,
+    });
+  };
+
   if (visitors.length === 0) {
     return <EmptyState icon={Users} text="No users have registered yet." />;
   }
@@ -297,10 +414,23 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email, phone…"
+            placeholder="Search name, email, phone, site…"
             className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/35 focus:border-gold/50 focus:outline-none"
           />
         </div>
+        <FilterSelect value={siteFilter} onChange={setSiteFilter}>
+          <option value="all" className="bg-ink text-white">
+            All sites
+          </option>
+          <option value="mine" className="bg-ink text-white">
+            This site only
+          </option>
+          {siteNames.map((s) => (
+            <option key={s} value={s} className="bg-ink text-white">
+              {s}
+            </option>
+          ))}
+        </FilterSelect>
         <FilterSelect value={statusFilter} onChange={(v) => setStatusFilter(v as StatusFilter)}>
           <option value="all" className="bg-ink text-white">
             All statuses
@@ -312,6 +442,16 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
             Inactive only
           </option>
         </FilterSelect>
+
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={filtered.length === 0}
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 transition-colors hover:border-gold/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-white/10"
+        >
+          <Download className="h-4 w-4 text-gold" />
+          Export CSV
+        </button>
       </div>
 
       {/* Bulk action toolbar */}
@@ -357,7 +497,7 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
         <>
           <div className="overflow-hidden rounded-3xl glass">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left text-sm">
+              <table className="w-full min-w-[880px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-[0.65rem] uppercase tracking-wider text-white/45">
                     <th className="px-5 py-4">
@@ -366,6 +506,7 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
                     <th className="px-5 py-4 font-semibold">Name</th>
                     <th className="px-5 py-4 font-semibold">Email</th>
                     <th className="px-5 py-4 font-semibold">Phone</th>
+                    <th className="px-5 py-4 font-semibold">Registered on</th>
                     <th className="px-5 py-4 font-semibold">Status</th>
                     <th className="px-5 py-4 font-semibold">Registered</th>
                     <th className="px-5 py-4 text-right font-semibold">Actions</th>
@@ -387,6 +528,9 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
                       <td className="px-5 py-4 font-medium text-white">{v.name}</td>
                       <td className="px-5 py-4 text-white/75">{v.email}</td>
                       <td className="px-5 py-4 text-white/60">{v.phone || "—"}</td>
+                      <td className="px-5 py-4">
+                        <SiteBadge site={v.site} own={v.ownSite} />
+                      </td>
                       <td className="px-5 py-4">
                         <StatusBadge active={v.active} />
                       </td>
@@ -434,6 +578,29 @@ function RegisteredUsersManager({ visitors }: { visitors: VisitorItem[] }) {
         />
       )}
     </div>
+  );
+}
+
+/**
+ * Which brand this account signed up on.
+ *
+ * The organiser's own site is the one they are accountable for, so it gets the
+ * gold treatment and everything else stays quiet — the row still says where the
+ * person came from, but the list reads as "mine, and these others" rather than
+ * as an undifferentiated network dump.
+ */
+function SiteBadge({ site, own }: { site: string; own: boolean }) {
+  return (
+    <span
+      className={`inline-flex max-w-[190px] items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
+        own
+          ? "border-gold/40 bg-gold/[0.08] text-gold"
+          : "border-white/12 bg-white/[0.04] text-white/55"
+      }`}
+      title={own ? `${site} — this site` : site}
+    >
+      <span className="truncate">{site}</span>
+    </span>
   );
 }
 
@@ -765,10 +932,28 @@ const PAGE_SIZES = [10, 25, 50];
 type TypeFilter = "all" | "self" | "others";
 type AnonFilter = "all" | "anon" | "named";
 
+/**
+ * The submission, as spreadsheet columns.
+ *
+ * `business_location` rather than `location`: the contact columns appended
+ * after these carry the person's own location, and one file cannot have two of
+ * either.
+ */
+const NOMINATION_CSV_HEADERS = [
+  'id', 'nominee', 'nominee_email', 'nominee_mobile',
+  'business', 'business_location', 'sector',
+  'nominator', 'nominator_email',
+  'categories', 'type', 'anonymous', 'heard_via',
+  'submitted', 'submitted_at', 'created_at',
+];
+
 function NominationsManager({
   nominations,
+  site = "",
 }: {
   nominations: NominationItem[];
+  /** This site's slug, so a download says which site it came from. */
+  site?: string;
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -781,6 +966,55 @@ function NominationsManager({
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
+
+  const exportCsv = () => {
+    const extra = customColumns(
+      filtered.map((n) => n.contact),
+      [...NOMINATION_CSV_HEADERS, ...CONTACT_HEADERS],
+    );
+    const csv = toCsv(
+      [...NOMINATION_CSV_HEADERS, ...CONTACT_HEADERS, ...extra],
+      filtered.map((n) => ({
+        id: n.id,
+        nominee: n.nominee === "—" ? "" : n.nominee,
+        nominee_email: n.nomineeEmail ?? "",
+        nominee_mobile: n.nomineeMobile ?? "",
+        business: n.businessName ?? "",
+        business_location: n.businessLocation ?? "",
+        sector: n.businessCategory ?? "",
+        nominator: n.nominator === "—" ? "" : n.nominator,
+        nominator_email: n.nominatorEmail ?? "",
+        // Semicolons, because a nomination routinely enters several categories
+        // and the category names themselves contain commas.
+        categories: n.categories.join("; "),
+        type: n.selfNominate ? "Self" : "On behalf of others",
+        anonymous: n.anonymous ? "Yes" : "No",
+        heard_via: n.howHeard ?? "",
+        // Both: one to read, one to sort by.
+        submitted: n.submitted,
+        submitted_at: n.submittedIso ?? "",
+        created_at: n.createdIso ?? "",
+        // What the contact list holds about this person, beside what they typed
+        // into the form. Blank where we have never heard of them.
+        ...contactCells(n.contact),
+        ...customCells(n.contact, extra),
+      })),
+    );
+    const url = URL.createObjectURL(
+      new Blob([csv], { type: "text/csv;charset=utf-8;" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = exportFilename(site, "nominations");
+    a.click();
+    URL.revokeObjectURL(url);
+    setToast({
+      kind: "ok",
+      msg: `Exported ${filtered.length} nomination${
+        filtered.length === 1 ? "" : "s"
+      } to CSV.`,
+    });
+  };
 
   const handleDelete = async () => {
     if (deleteId === null) return;
@@ -959,6 +1193,16 @@ function NominationsManager({
             )
           }
         />
+
+        <button
+          type="button"
+          onClick={exportCsv}
+          disabled={filtered.length === 0}
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white/80 transition-colors hover:border-gold/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-white/10"
+        >
+          <Download className="h-4 w-4 text-gold" />
+          Export CSV
+        </button>
       </div>
 
       <p className="px-1 text-xs text-white/45">
