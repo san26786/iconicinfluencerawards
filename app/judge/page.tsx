@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   ListChecks, Star, ClipboardList, CheckCircle, ShoppingBag,
   UserCircle, LayoutDashboard, UserCog, UtensilsCrossed, Users,
-  UserPlus, KeyRound, Trophy, ArrowRight,
+  UserPlus, KeyRound, Trophy, ArrowRight, BookOpen,
 } from 'lucide-react';
 import { LogoutButton } from '@/components/auth/AuthForms';
 
@@ -24,6 +24,9 @@ const JUDGE_BUTTONS = [
   { label: 'Book a Table Now',         icon: UtensilsCrossed, href: '#',                    highlight: false },
   { label: 'Manage My Guest List',     icon: Users,           href: '#',                    highlight: false },
   { label: 'Add New Guest',            icon: UserPlus,        href: '#',                    highlight: false },
+  // Highlighted: a judge who cannot work out the scoring panel needs this more
+  // than any of the grey buttons above it.
+  { label: 'Judge Guide',              icon: BookOpen,       href: '/judges/guide',        highlight: true },
 ];
 
 export default async function JudgeDashboardPage() {

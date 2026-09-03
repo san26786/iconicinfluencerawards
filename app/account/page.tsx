@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import {
   ClipboardList, CheckCircle, ShoppingBag, Calendar,
-  UserCircle, Scale, UtensilsCrossed, Users, UserPlus, KeyRound, LayoutDashboard, UserCog
+  UserCircle, Scale, UtensilsCrossed, Users, UserPlus, KeyRound, LayoutDashboard, UserCog, BookOpen
 } from 'lucide-react';
 import { getSessionUser } from '@/lib/auth';
 import { nominationsForUser } from '@/lib/nominations';
@@ -20,6 +20,9 @@ const APPLICANT_BUTTONS = [
   { label: 'My Schedule',              icon: Calendar,         href: '#' },
   { label: 'Update My Awards Profile', icon: UserCircle,       href: '/account/profile' },
   { label: 'Become a Judge',           icon: Scale,            href: '/judges' },
+  // The manual belongs on the dashboard, not only in the nomination email that
+  // brought them here — that message is weeks old by the time somebody is stuck.
+  { label: 'User Guide',               icon: BookOpen,         href: '/account/guide' },
   { label: 'Book My Table Now',        icon: UtensilsCrossed,  href: '#' },
   { label: 'Manage My Guest List',     icon: Users,            href: '#' },
   { label: 'Add New Guest',            icon: UserPlus,         href: '#' },
@@ -32,6 +35,7 @@ const JUDGE_BUTTONS = [
   { label: 'Update My Awards Profile', icon: UserCircle,       href: '/account/profile' },
   { label: 'View Judging Board',       icon: LayoutDashboard,  href: '/judge/board' },
   { label: 'Update Judge Profile',     icon: UserCog,          href: '/judge/profile' },
+  { label: 'Judge Guide',              icon: BookOpen,         href: '/judges/guide' },
   { label: 'Book a Table Now',         icon: UtensilsCrossed,  href: '#' },
   { label: 'Manage My Guest List',     icon: Users,            href: '#' },
   { label: 'Add New Guest',            icon: UserPlus,         href: '#' },
