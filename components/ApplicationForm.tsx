@@ -207,7 +207,7 @@ function DynamicQuestion({
       )}
 
       {/* select (MCQ) */}
-      {q.field_type === 'select' && q.options && (
+      {q.field_type === 'select' && q.options && q.options.length > 0 && (
         <div className="flex flex-col gap-2 pl-8">
           {q.options.map(opt => (
             <label key={opt} className="flex cursor-pointer items-center gap-2 text-sm text-white/70">
@@ -221,16 +221,6 @@ function DynamicQuestion({
       )}
 
       {/* text */}
-      {q.field_type === 'text' && (
-        <textarea
-          className={`${ta} pl-8`}
-          rows={5}
-          value={answer}
-          onChange={e => onChange(e.target.value)}
-          placeholder="Write your response here…"
-        />
-      )}
-
       {/* number */}
       {q.field_type === 'number' && (
         <input
@@ -241,8 +231,40 @@ function DynamicQuestion({
           placeholder="Enter a number"
         />
       )}
+
+      {/* text, paragraph, and anything else */}
+      {writesProse(q) && (
+        <textarea
+          className={`${ta} pl-8`}
+          rows={q.field_type === 'paragraph' ? 8 : 5}
+          value={answer}
+          onChange={e => onChange(e.target.value)}
+          placeholder="Write your response here…"
+        />
+      )}
     </div>
   );
+}
+
+/**
+ * Whether this question is answered by typing prose — and so needs a textarea.
+ *
+ * Written as "everything except the types with a control of their own" rather
+ * than as a list of the ones that do. The list was `field_type === 'text'`, and
+ * the question library holds eight hundred questions typed `paragraph`: an
+ * entrant opening the Response step saw the questions, saw no box to answer
+ * them in, and had no way to enter at all. Nothing rendered, so nothing said
+ * anything was wrong.
+ *
+ * A type nobody has thought of yet now gets a box instead of silence. A wrong
+ * box is a wrong box; no box is a dead end.
+ */
+function writesProse(q: EventQuestion): boolean {
+  if (q.field_type === 'yes_no' || q.field_type === 'number') return false;
+  // A select with nothing to select from is not a select. Those rows exist
+  // whenever a question is imported before its options are filled in.
+  if (q.field_type === 'select' && q.options && q.options.length > 0) return false;
+  return true;
 }
 
 // ---------------------------------------------------------------------------

@@ -11,7 +11,17 @@ export const dynamic = 'force-dynamic';
 export type EventQuestion = {
   id: number;
   question_text: string;
-  field_type: 'yes_no' | 'text' | 'number' | 'select';
+  /**
+   * How the question is answered.
+   *
+   * The four named here were the whole union, and the question library holds
+   * eight hundred rows typed `paragraph` — a value the type said could not
+   * exist, so the form had no branch for it and drew those questions with no
+   * answer box at all. `paragraph` is named now, and the open end is honest
+   * about the rest: this is a free-text column that organisers and imports both
+   * write to, and the form treats anything it does not recognise as prose.
+   */
+  field_type: 'yes_no' | 'text' | 'paragraph' | 'number' | 'select' | (string & {});
   options: string[] | null;
   is_required: boolean;
   display_order: number;
