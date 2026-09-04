@@ -433,3 +433,63 @@ html[data-theme="light"] .bg-ink\/\[0\.03\]   { background-color: rgba(15,15,26,
 html[data-theme="light"] .bg-ink\/\[0\.02\]   { background-color: rgba(15,15,26,.02) !important; }
 html[data-theme="light"] .bg-white\/\[0\.025\] { background-color: rgba(15,15,26,.025) !important; }
 html[data-theme="light"] .bg-white\/\[0\.02\]  { background-color: rgba(15,15,26,.02) !important; }
+
+/* ── Printing a brochure deck ─────────────────────────────────────
+   The deck shows one slide at a time by translating a track inside a
+   100svh window, but every slide is in the DOM the whole time. So print
+   only has to undo the two things doing the hiding — the fixed height and
+   the transform — and the full document falls out, one slide per sheet.
+   No second copy of the content, which on a 23-slide pack would have
+   doubled a page that is already half a megabyte.
+
+   inert is set on off-screen slides to keep them out of the tab order; it
+   carries no visual effect, so printed slides are unaffected. */
+@media print {
+  .brochure-deck,
+  .brochure-deck .deck-stage {
+    height: auto !important;
+    flex: none !important;
+    overflow: visible !important;
+  }
+  .brochure-deck .brochure-track {
+    transform: none !important;
+    transition: none !important;
+  }
+  .brochure-deck [aria-roledescription="slide"] {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    break-after: page;
+    page-break-after: always;
+  }
+  .brochure-deck [aria-roledescription="slide"]:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  /* Slides are scaled to fit the screen they are shown on. A sheet of A4 is not
+     that screen, so paper takes the content at full size and lets the page
+     breaks above do the dividing. */
+  .brochure-deck .slide-fit {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .brochure-deck .slide-fit-inner {
+    height: auto !important;
+    transform: none !important;
+  }
+  /* Deck chrome earns its place on screen, not on paper. Tagged by class rather
+     than "every child that isn't the track" — the deck variant nests the track
+     inside a stage, so a structural rule would have hidden the slides. */
+  .deck-chrome {
+    display: none !important;
+  }
+  /* Reveal animations start elements at opacity 0; print must not inherit a
+     half-finished animation state for slides the reader never advanced to. */
+  .brochure-deck .reveal,
+  .brochure-deck .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

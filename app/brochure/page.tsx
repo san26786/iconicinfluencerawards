@@ -316,7 +316,12 @@ function Slide({
 }) {
   return (
     <section
-      className={`relative flex min-h-full flex-col [justify-content:safe_center] overflow-hidden pt-28 pb-28 ${
+      // Even padding, and much less of it than there was. The old figures
+      // cleared two things that are no longer over the slide: a site header
+      // above it and a floating Prev/Next below. The deck chrome now sits in
+      // bars of its own, outside the stage, so 192px of the screen was being
+      // held back from content that was then shrunk to fit what was left.
+      className={`relative flex min-h-full flex-col [justify-content:safe_center] overflow-hidden py-10 sm:py-12 ${
         tone === 'ink' ? 'bg-ink' : 'bg-slate950'
       }`}
     >
@@ -533,7 +538,7 @@ export default async function BrochurePage() {
       content: (
         <Slide tone="slate">
           <div className="container-luxe section-pad">
-            <Reveal className="mx-auto mb-10 max-w-3xl text-center">
+            <Reveal className="mx-auto mb-8 max-w-3xl text-center">
               <SectionLabel n="03">Focused Themes</SectionLabel>
               <h2 className="font-display text-3xl font-semibold text-white text-balance sm:text-4xl">
                 {themes.length} themes, <span className="text-gold-gradient">one ceremony</span>
@@ -544,26 +549,34 @@ export default async function BrochurePage() {
                 distinct areas of focus, united by a single vision.
               </p>
             </Reveal>
-            <RevealGroup className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+            {/* Four across on a wide screen: seven themes is three rows at
+                three columns, and the third row is what pushed this slide past
+                the height of a laptop screen. */}
+            <RevealGroup className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" stagger={0.07}>
               {themes.map(t => (
                 <RevealItem key={t.name}>
-                  <div className="h-full rounded-2xl glass p-7">
-                    <span className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gold/25 bg-gold/10 text-gold">
+                  <div className="h-full rounded-2xl glass p-5">
+                    <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gold/25 bg-gold/10 text-gold">
                       <Icon name={(t.icon || 'Trophy') as IconName} className="h-5 w-5" />
                     </span>
                     {t.theme && (
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold/60">{t.theme}</p>
                     )}
                     <h3 className="mt-1 font-display text-lg font-semibold text-white">{t.name}</h3>
-                    {t.tagline && <p className="mt-1 text-sm text-white/45">{t.tagline}</p>}
+                    {/* Clamped, because these come from the database and one of
+                        them is five times the length of the others — a single
+                        long theme stretched its whole grid row and took the
+                        slide past the height of the screen. The full text is a
+                        click away on /categories. */}
+                    {t.tagline && <p className="mt-1 line-clamp-2 text-sm text-white/45">{t.tagline}</p>}
                     {t.description && (
-                      <p className="mt-3 text-sm leading-relaxed text-white/55">{t.description}</p>
+                      <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-white/55">{t.description}</p>
                     )}
                   </div>
                 </RevealItem>
               ))}
             </RevealGroup>
-            <Reveal className="mt-8 text-center">
+            <Reveal className="mt-6 text-center">
               <Link
                 href="/categories"
                 className="inline-flex items-center gap-2 rounded-full glass px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-gold/40 hover:text-gold"
@@ -867,7 +880,7 @@ export default async function BrochurePage() {
       content: (
         <Slide tone="slate">
           <div className="container-luxe section-pad">
-            <Reveal className="mx-auto mb-9 max-w-3xl text-center">
+            <Reveal className="mx-auto mb-7 max-w-3xl text-center">
               <SectionLabel n="11">Partnership Packages</SectionLabel>
               <h2 className="font-display text-3xl font-semibold text-white text-balance sm:text-4xl">
                 Three tiers, <span className="text-gold-gradient">one partnership</span>
@@ -877,10 +890,14 @@ export default async function BrochurePage() {
                 at the door isn&apos;t worth paying for.
               </p>
             </Reveal>
-            <RevealGroup className="grid gap-6 lg:grid-cols-3" stagger={0.09}>
+            {/* Three across from tablet width, not from desktop. One column of
+                three packages is the tallest thing in the deck by a distance —
+                on an iPad it was the last slide that still could not be fitted
+                to the screen. */}
+            <RevealGroup className="grid gap-5 md:grid-cols-3" stagger={0.09}>
               {PACKAGES.map(p => (
                 <RevealItem key={p.name}>
-                  <div className={`h-full rounded-2xl border ${p.border} bg-gradient-to-br ${p.bg} p-7`}>
+                  <div className={`h-full rounded-2xl border ${p.border} bg-gradient-to-br ${p.bg} p-5`}>
                     {p.featured && (
                       <span className="mb-4 inline-flex rounded-full bg-gold-gradient px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-ink">
                         Headline tier
@@ -895,20 +912,20 @@ export default async function BrochurePage() {
                         <p className={`text-xs font-semibold uppercase tracking-wider ${p.accent}`}>{p.tier}</p>
                       </div>
                     </div>
-                    <p className="mt-4 text-xs uppercase tracking-wider text-white/35">Investment on application</p>
+                    <p className="mt-3 text-xs uppercase tracking-wider text-white/35">Investment on application</p>
 
                     {[
                       { label: 'Before the ceremony', items: p.before },
                       { label: 'On the day', items: p.during },
                       { label: 'After the event', items: p.after },
                     ].map(block => (
-                      <div key={block.label} className="mt-5">
-                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/40">
+                      <div key={block.label} className="mt-4">
+                        <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white/40">
                           {block.label}
                         </p>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1.5">
                           {block.items.map(item => (
-                            <li key={item} className="flex items-start gap-2 text-sm leading-relaxed text-white/60">
+                            <li key={item} className="flex items-start gap-2 text-sm leading-snug text-white/60">
                               <CheckCircle2 className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${p.accent}`} />
                               {item}
                             </li>
@@ -1059,8 +1076,20 @@ export default async function BrochurePage() {
   ];
 
   return (
-    <main id="main">
-      <BrochureFlipbook slides={slides} />
+    <main id="main" className="bg-ink">
+      <BrochureFlipbook
+        slides={slides}
+        title={site.name}
+        label="Show Brochure"
+        action={{
+          // Short on purpose. The bar also carries the site name, and at a
+          // phone width the site's usual 'Start Your Free Entry' truncated that
+          // name to a few letters. The cover slide behind it still says the entry
+          // is free; the bar only has to say what the button does.
+          label: 'Enter now',
+          href: '/register-interest',
+        }}
+      />
     </main>
   );
 }

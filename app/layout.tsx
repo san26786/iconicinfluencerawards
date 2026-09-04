@@ -208,16 +208,22 @@ export default async function RootLayout({
           Skip to content
         </a>
         <GoogleAnalytics gaId={site.ga_id ?? undefined} />
-        <SiteHeader
-          siteName={site.name}
-          nominateUrl="/register-interest"
-          // Empty when no logo has been uploaded — SiteHeader then renders the
-          // typographic wordmark instead of a stand-in image.
-          logoSrc={site.logo_url ?? ''}
-          logoSrcLight={site.logo_url_light ?? undefined}
-          logoAlt={site.name}
-          logoSize="lg"
-        />
+        {/* The deck's own bar carries the site name, a link home and the entry
+            call to action, so the site header on top of it is a second bar over
+            the same slide — and the two together took a fifth of a laptop screen
+            off the thing they were framing. */}
+        <HideOnPaths paths={['/brochure', '/media-pack']}>
+          <SiteHeader
+            siteName={site.name}
+            nominateUrl="/register-interest"
+            // Empty when no logo has been uploaded — SiteHeader then renders the
+            // typographic wordmark instead of a stand-in image.
+            logoSrc={site.logo_url ?? ''}
+            logoSrcLight={site.logo_url_light ?? undefined}
+            logoAlt={site.name}
+            logoSize="lg"
+          />
+        </HideOnPaths>
         {children}
         {/* The brochure deck owns the full viewport and ends with its own
             contact slide — a footer under it would only add a stray scroll. */}
